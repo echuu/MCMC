@@ -46,6 +46,53 @@ public class SMC {
 
 	}
 
+	/**
+	 * Advance to the next valid point in SAW
+	 * current position (r,c)
+	 * length of path so far: i
+	 * grid: contains visited points, to update
+	 * path: store the path the SAW takes 
+	 * return the number of potential paths: k_j
+	 */
+	public static int nextMove(int r, int c, int i, 
+							   int[][] grid, int[][] path) {
+
+		int move = 0;
+		int dim = grid.length;
+
+		// determine possible paths: check bdy, check for visited
+		if (((r + 1) < grid) && !(grid[r+1][c]) {    		// look up
+
+		} else if ((r > 0) && !grid[r-1][c]) {       		// look down
+
+		} else if (((c + 1) < grid) && !grid[r][c+1]) {		// look right
+
+		} else if ((c > 0) && !grid[r][c-1]){				// look left
+
+		} else {
+
+		}
+
+		// make move
+		switch(move) {
+			case 0:  r++;
+					 break;
+			case 1:  r--;
+					 break;
+			case 2:  c--;
+					 break;
+			case 3:  c++;
+					 break;
+			default: // no valid moves -- k_j = 1;
+					 break;
+		}
+		// mark new position as visited
+		grid[r][c]++;
+
+		// update position, return k_j
+
+	}
+
 
 	/**
 	 * monte carlo integration
