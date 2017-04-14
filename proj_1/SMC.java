@@ -8,6 +8,11 @@ import java.util.*;
 
 public class SMC {
 
+	private int UP    = 0;
+	private int DOWN  = 1;
+	private int RIGHT = 2;
+	private int LEFT  = 3;
+
 	public static void p1() {
 
 		System.out.println("Problem 1 on Homework 1");
@@ -29,22 +34,72 @@ public class SMC {
 
 	}
 
-	/*
-	 *  simulate a uniform probability distribution
-	 *  input possible choices
-	 *  return the choice chosen
+	/**
+	 * design the probability used for monte carlo integration
+	 * simulate a complete SAW
+	 * keep track of path length
+	 * return G: product of k_j's, the inverse of g()
 	 */
-	public static void prob(int[] choices) {
+	public static int inv_g(int[][] grid) {
 
-		int p;
-		int dist = choices.length;
+		double G = 1;
+		int r, c;
+		int move;
+		double k_j = 1;
+		double p;
+		int path_length = 0;
+		
+		r = 0; // start at lower left corner
+		c = 0;
 
-		for (int i = 0; i < 10000; i++) {
-			p = new Random().nextInt(dist);
-			choices[p]++;
-		}
+		grid[r][c]++;
+		ArrayList<Integer> validMoves;
 
-	}
+		// while path satisfies SAW condition
+		while(1) {
+
+			// find valid moves
+			findValidMoves(r, c, grid, validMoves);
+			
+			// randomly determine next move from valid moves
+			k_j = validMoves.size(); // can be zero, check when reenter
+
+			if (k_j == 0) {
+				break;
+			}
+
+			p          = new Random().nextInt(k_j);
+			move       = validMoves.get(p);
+
+			// make move
+			switch(move) {
+				case UP:     r++;
+						     break;
+				case DOWN:   r--;
+						     break;
+				case RIGHT:  c++;
+						     break;
+				case LEFT:   c--;
+						     break;
+				default:     // no valid moves -- k_j = 1;
+						     break;
+			} // end switch
+
+			// update grid: mark new position as visited
+			grid[r][c]++;
+			path_length++;
+
+			// running product of k_j's, 
+			// k_j = # of possible paths at each point
+			G = G * k_j;
+
+		} // end while()
+
+		return G; // g = 1/G, used in MC integration
+		
+	} // end g() function
+
+	
 
 	/**
 	 * Advance to the next valid point in SAW
@@ -54,43 +109,31 @@ public class SMC {
 	 * path: store the path the SAW takes 
 	 * return the number of potential paths: k_j
 	 */
-	public static int nextMove(int r, int c, int i, 
-							   int[][] grid, int[][] path) {
+	public static ArrayList<Integer> findValidMoves(int r, int c, 
+														int[][] grid,
+														int[][] validMoves) {
 
-		int move = 0;
 		int dim = grid.length;
+
+		validMoves.clear();
+
+		//ArrayList<Integer> validMoves = new ArrayList<Integer>();
 
 		// determine possible paths: check bdy, check for visited
 		if (((r + 1) < grid) && !(grid[r+1][c]) {    		// look up
-
-		} else if ((r > 0) && !grid[r-1][c]) {       		// look down
-
-		} else if (((c + 1) < grid) && !grid[r][c+1]) {		// look right
-
-		} else if ((c > 0) && !grid[r][c-1]){				// look left
-
-		} else {
-
+			validMoves.add(UP); // add UP to potential moves
 		}
-
-		// make move
-		switch(move) {
-			case 0:  r++;
-					 break;
-			case 1:  r--;
-					 break;
-			case 2:  c--;
-					 break;
-			case 3:  c++;
-					 break;
-			default: // no valid moves -- k_j = 1;
-					 break;
+		if ((r > 0) && !grid[r-1][c]) {       		        // look down
+			validMoves.add(DOWN); // add DOWN to potential moves
 		}
-		// mark new position as visited
-		grid[r][c]++;
+		if (((c + 1) < grid) && !grid[r][c+1]) {			// look right
+			validMoves.add(RIGHT); // add RIGHT to potential moves
+		}
+		if ((c > 0) && !grid[r][c-1]){						// look left
+			validMoves.add(LEFT); // add LEFT to potential moves
+		} 
 
-		// update position, return k_j
-
+		return validMoves;
 	}
 
 
