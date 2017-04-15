@@ -52,7 +52,7 @@ public class SMC {
 
 	public static void displayGrid(int[][] grid) {
 
-		for (int r = 0; r < grid.length; r++) {
+		for (int r = grid.length-1; r >= 0; r--) {
 			for (int c = 0; c < grid.length; c++) {
 				System.out.print(grid[r][c] + " ");
 			}
@@ -66,12 +66,14 @@ public class SMC {
 		System.out.println("Project 1: Sequential Monte Carlo");
 
 		int M   = 1;   // iterations of MC integration
-		int dim = 10;    // dimension of the board
+		int dim = 3;    // dimension of the board
 		double omega = 0;
 
 
 		SMC simulate = new SMC();
 		omega = simulate.mcIntegrate(M, dim);
+
+		System.out.println("Total # of SAWs: " + omega);
 
 	} // end main()
 }

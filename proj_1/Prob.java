@@ -41,6 +41,7 @@ public class Prob {
 		c = 0;
 
 		grid[r][c]++;
+		displayGrid(grid);
 		ArrayList<Integer> validMoves = new ArrayList<Integer>();
 
 		// while path satisfies SAW condition
@@ -128,7 +129,16 @@ public class Prob {
 		return validMoves;
 	} // end findValidMoves() function
 
+	public static void displayGrid(int[][] grid) {
 
+		for (int r = grid.length-1; r >= 0; r--) {
+			for (int c = 0; c < grid.length; c++) {
+				System.out.print(grid[r][c] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
 
 
 }
