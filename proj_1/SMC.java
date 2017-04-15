@@ -23,6 +23,8 @@ public class SMC {
 		int[][] grid = new int[n+1][n+1];
 		double g_inverse = p.inv_g(grid);
 
+		displayGrid(grid);
+
 		return g_inverse;
 	} // end SAW() function
 
@@ -48,13 +50,28 @@ public class SMC {
 	} // end mcIntegrate() function
 
 
+	public static void displayGrid(int[][] grid) {
+
+		for (int r = 0; r < grid.length; r++) {
+			for (int c = 0; c < grid.length; c++) {
+				System.out.print(grid[r][c] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+
 	public static void main(String[] args) {
 		System.out.println("Project 1: Sequential Monte Carlo");
 
+		int M   = 1;   // iterations of MC integration
+		int dim = 10;    // dimension of the board
+		double omega = 0;
+
+
 		SMC simulate = new SMC();
-
-		int[] moves = {0, 0, 0, 0};
-
+		omega = simulate.mcIntegrate(M, dim);
 
 	} // end main()
 }

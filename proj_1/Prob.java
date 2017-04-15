@@ -15,7 +15,7 @@ public class Prob {
 	private static final int RIGHT = 2;
 	private static final int LEFT  = 3;
 
-	static int LONGEST_PATH;
+	static int LONGEST_PATH = 0;
 
 	public void callProbFunc() {
 
