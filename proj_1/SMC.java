@@ -13,26 +13,47 @@ public class SMC {
 	private int RIGHT = 2;
 	private int LEFT  = 3;
 
+	int longest_path = 0;
+
 	public static void p1() {
 
 		System.out.println("Problem 1 on Homework 1");
 
 	}
 
-
-	public static void SAW(int n) {
+	/*
+	 * returns the result of ONE call to g_inv()
+	 * called each time to simulate SAW
+	 */
+	public static int SAW(int n) {
 
 		int[][] grid = new int[n+1][n+1];
+		int g_inverse = inv_g(grid);
 
-		for (int r = 0; r < n+1; r++) {
-			for (int c = 0; c < n+1; c++) {
-				System.out.print(grid[r][c] + " ");
-			}
-			System.out.println();
-		}
+		return g_inverse;
+	} // end SAW() function
 
 
-	}
+	/**
+	 * monte carlo integration
+	 * used to appproximate the number of SAWs
+	 */
+	public double mcIntegrate(int M, int dim) {
+
+		double sum       = 0; // # of longest paths
+		double saw_i;
+		int longest_path = 0;
+
+		// each iteration will call spawn new grid and call inv_g()
+		// 
+	 	for (int i = 0; i < M; i++) {
+	 		// accummulate 1 / g(x_i) <=> accummulate G(x_i)
+	 		// G(x_i) is returned by calling inv_g
+	 		sum += SAW(dim);
+	 	}
+
+	 	return sum / M;
+	} // end mcIntegrate() function
 
 	/**
 	 * design the probability used for monte carlo integration
@@ -62,7 +83,7 @@ public class SMC {
 			findValidMoves(r, c, grid, validMoves);
 			
 			// randomly determine next move from valid moves
-			k_j = validMoves.size(); // can be zero, check when reenter
+			k_j = validMoves.size(); // can be zero, check when re-enter
 
 			if (k_j == 0) {
 				break;
@@ -81,7 +102,7 @@ public class SMC {
 						     break;
 				case LEFT:   c--;
 						     break;
-				default:     // no valid moves -- k_j = 1;
+				default:     System.out.println("Error -- no move made");
 						     break;
 			} // end switch
 
@@ -95,9 +116,15 @@ public class SMC {
 
 		} // end while()
 
-		return G; // g = 1/G, used in MC integration
-		
-	} // end g() function
+		result[0] = G; // g = 1/G, used in MC integration
+
+		if (path_length > this.longest_path) {
+			this.longest_path = path_length;
+		}
+
+		return G; 
+
+	} // end inv_g() function
 
 	
 
@@ -134,25 +161,8 @@ public class SMC {
 		} 
 
 		return validMoves;
-	}
+	} // end findValidMoves() function
 
-
-	/**
-	 * monte carlo integration
-	 * used to appproximate the number of SAWs
-	 */
-	public double mcIntegrate(int M) {
-
-		double sum = 0;
-		int moves = {0, 1, 2, 3, 4}
-
-
-	 	for (int i = 0; i < M; i++) {
-	 		// accummulate 1 / g(x_i)
-	 	}
-
-	 	return sum / M;
-	}
 
 
 	public static void main(String[] args) {
@@ -166,5 +176,5 @@ public class SMC {
 			System.out.println("Move " + (i+1) + ": " + moves[i]);
 		}
 
-	}
+	} // end main()
 }
