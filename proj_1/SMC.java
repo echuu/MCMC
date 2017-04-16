@@ -80,6 +80,27 @@ public class SMC {
 		System.out.println();
 	} // end displayPath() function
 
+
+	public int[] getSampleSize(int n, double growth_rate) {
+		int[] num_samples = new int[n];
+
+		for (int i = 1; i <= 24; i++) {
+			double power = growth_rate * i;
+			int result = (int) Math.floor(Math.pow(10, power));
+
+			num_samples[i-1] = result;
+		}
+
+		return num_samples;
+	}
+
+	// display the resuling max path length ~ iter i
+	public static void displayPathLenghts(double[] p_len) {
+		for (int i = 0; i < p_len.length; i++) {
+			System.out.println(p_len[i]);
+		}
+	}
+
 	public static void main(String[] args) {
 		System.out.println("Project 1: Sequential Monte Carlo");
 
@@ -89,24 +110,26 @@ public class SMC {
 		double omega = 0;
 		SMC simulate = new SMC();
 		double[] p_len  = new double[M]; 		// path lengths for each iter
+
+		int num_iter       = 24;
+		double growth_rate = 0.3;
 		// end MC initialization
 
 
-		for (int i = 0; i < M; i++) {
-			omega    = simulate.mcIntegrate(M, dim);
+		int[] ss_arr = new int[num_iter];
+		ss_arr = simulate.getSampleSize(num_iter, growth_rate);
+
+		for (int i = 0; i < num_iter; i++) {
+			int samp_size = ss_arr[i];
+			// System.out.println(samp_size);
+			omega = simulate.mcIntegrate(samp_size, dim);
 			p_len[i] = omega;
 		}
 
-		
-		if (1 == 0) {
-			for (int i = 0; i < M; i++) {
-				System.out.println(p_len[i]);
-			}
-		}
+		System.out.println("Simulation complete");
+		System.out.println("Writing to file");
 
 		simulate.d.writeData(p_len, "path_lengths");
-
-		//System.out.println("Value of 10^7 = " + M);
 
 		// simulate.displayPath(simulate.p.path_r, simulate.p.path_c);
 

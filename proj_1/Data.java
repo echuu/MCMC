@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.Writer;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
+//import java.lang.*;
 
 public class Data {
 
@@ -40,22 +41,38 @@ public class Data {
 	
 	public static void main(String[] args) {
 
-		System.out.println("Test write to csv");
+		if (1 == 0) {
+			System.out.println("Test write to csv");
 
-		Data d = new Data();
+			Data d = new Data();
 
-		double[] arr = new double[10];
+			double[] arr = new double[10];
 
-		for (int i = 0; i < 10; i++) {
-			// int p = ;
-			arr[i] = new Random().nextInt(10) + 1;
-			System.out.print(arr[i] + " ");
+			for (int i = 0; i < 10; i++) {
+				// int p = ;
+				arr[i] = new Random().nextInt(10) + 1;
+				System.out.print(arr[i] + " ");
+			}
+			System.out.println();
+
+			d.writeData(arr, "data");
+
+			System.out.println("Wrote array to file");
 		}
-		System.out.println();
 
-		d.writeData(arr, "data");
+		int[] num_samples = new int[24];
 
-		System.out.println("Wrote array to file");
+		for (int n = 1; n <= 24; n++) {
+			double power = 0.3 * n;
+			int result = (int) Math.floor(Math.pow(10, power));
+
+			num_samples[n-1] = result;
+		}
+
+		for (int n = 0; n < 24; n++) {
+			System.out.println(num_samples[n]);
+		}
+
 
 
 	}
