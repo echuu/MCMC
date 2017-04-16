@@ -120,10 +120,12 @@ public class SMC {
 	}
 
 	public void storeResults(double[] p_len, ArrayList<Integer> p_rows, 
-											 ArrayList<Integer> p_cols) {
+											 ArrayList<Integer> p_cols,
+											 double eps) {
 		
 		int[] row_arr = new int[p_rows.size()];
 		int[] col_arr = new int[p_cols.size()];
+		String prefix;
 
 		// store rows, cols in arrays
 		for (int i = 0; i < row_arr.length; i++) {
@@ -131,9 +133,15 @@ public class SMC {
 			col_arr[i] = p_cols.get(i);
 		}
 
-		d.writeData(p_len,   "path_lengths"); 	// save path lengths
-		d.writeData(row_arr, "path_rows");		// save path rows
-		d.writeData(col_arr, "path_cols");		// save path cols
+		if (eps == 0) {
+			prefix = "d1_";
+		} else {
+			prefix = "d2_"; 
+		}
+
+		d.writeData(p_len,   prefix+"path_lengths"); 	// save path lengths
+		d.writeData(row_arr, prefix+"path_rows");		// save path rows
+		d.writeData(col_arr, prefix+"path_cols");		// save path cols
 	}
 
 
@@ -157,7 +165,7 @@ public class SMC {
 		}
 
 		System.out.println("Writing to file");
-		this.storeResults(p_len, this.lp_r, this.lp_c);
+		this.storeResults(p_len, this.lp_r, this.lp_c, eps);
 
 	}
 
@@ -178,7 +186,13 @@ public class SMC {
 		double eps     = 0.1;
 		// end SMC initialization
 
-		sim.design1(dim, num_iter, rate, 0); // 0 -> no stopping criteria 
+
+		System.out.println("Start design 1");
+		sim.design1(dim, num_iter, rate, 0); // 0 -> no stopping criteria
+
+
+		System.out.println("Start design 2");
+		sim = new SMC(); // clear contents
 
 		sim.design2(dim, num_iter, rate, eps);
 

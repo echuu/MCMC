@@ -6,10 +6,15 @@ library(reshape)
 
 # read in data
 processPaths() ## generate plot for longest SAW
-plotSAW();     ## generate plot for # SAWs vs. # of iterations
 
-design_1 = read.csv("d1_path_length.csv")[,2];
-design_2 = read.csv("d2_path_length.csv")[,2];
+design_1 = read.csv("d1_path_lengths.csv")[,2];
+design_2 = read.csv("d2_path_lengths.csv")[,2];
+
+path_1_r = read.csv("d1_path_rows.csv", header = FALSE);
+path_1_c = read.csv("d1_path_cols.csv", header = FALSE);
+
+path_2_r = read.csv("d2_path_rows.csv", header = FALSE);
+path_2_c = read.csv("d2_path_cols.csv", header = FALSE);
 
 iter = c()
 for (n in (1:38)) {
@@ -35,10 +40,7 @@ plotSAW = function(saw_data) {
   
 }
 
-processPaths = function() {
-  
-  p_rows = read.csv("path_rows.csv", header = FALSE);
-  p_cols = read.csv("path_cols.csv", header = FALSE);
+processPaths = function(p_rows, p_cols) {
   
   path_length = dim(p_rows)[1] - 1; ## starting point doesn't count
   
@@ -48,8 +50,8 @@ processPaths = function() {
   ## generate the longest SAW
   ggplot(grid_pts, aes(x = row, y = col)) + 
     geom_path(aes(colour = "red"), size = 2) +
-    labs(x = "", y = "", title = paste("SAW (length = ", path_length, ")",
-                                       sep = ""))
+    labs(x = "", y = "", 
+         title = paste("SAW (length = ", path_length, ")", sep = ""))
   
 }
 

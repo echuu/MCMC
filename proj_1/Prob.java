@@ -109,7 +109,7 @@ public class Prob {
 			LONGEST_PATH = path_length;
 		}
 
-		stop_criteria = Math.pow(stop_criteria, path_length);
+		stop_criteria = 1 / Math.pow(stop_criteria, path_length);
 
 		return stop_criteria * G; // g = 1/G, used in MC integration
 
@@ -160,6 +160,10 @@ public class Prob {
 			System.out.println();
 		}
 		System.out.println();
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Updating Prob.java");
 	}
 
 }
