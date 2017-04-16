@@ -11,24 +11,27 @@ public class SMC {
 	static Prob p;
 	static Data d;
 
+	static ArrayList<Integer> lp_r; // store row values of longest path
+	static ArrayList<Integer> lp_c; // store row values of longest path
+
 	public SMC() {
 		p = new Prob();
 		d = new Data();
+
+		lp_r = new ArrayList<Integer>();
+		lp_c = new ArrayList<Integer>();
 	}
 
 	/*
 	 * returns the result of ONE call to g_inv()
-	 * called each time to simulate SAW
+	 * called each time to sim SAW
 	 */
 	public static double SAW(int n) {
-
 		int[][] grid = new int[n+1][n+1];
 		double g_inverse = p.inv_g(grid);
-
-		//displayGrid(grid);
-
 		return g_inverse;
 	} // end SAW() function
+
 
 	/**
 	 * monte carlo integration
@@ -46,7 +49,6 @@ public class SMC {
 	 		saw_i = SAW(dim);
 	 		sum += saw_i;
 	 	}
-
 	 	// System.out.println("Longest path: " + p.LONGEST_PATH);
 
 	 	return sum / M;
@@ -65,6 +67,7 @@ public class SMC {
 		System.out.println();
 	} // end displayGrid() function
 
+
 	// display the path saved by simulating the SAW
 	public void displayPath(ArrayList<Integer> rows, ArrayList<Integer> cols) {
 
@@ -81,6 +84,11 @@ public class SMC {
 	} // end displayPath() function
 
 
+	/**
+	 * create an array, where each entry is the sample size for that iteration
+	 * n = number of iterations
+	 * growth_rate = how fast you want the powers of 10 to grow
+	 */
 	public int[] getSampleSize(int n, double growth_rate) {
 		int[] num_samples = new int[n];
 
@@ -92,48 +100,82 @@ public class SMC {
 		}
 
 		return num_samples;
-	}
+	} // end getSampleSize()
 
 	// display the resuling max path length ~ iter i
-	public static void displayPathLenghts(double[] p_len) {
+	public static void displayPathLengths(double[] p_len) {
 		for (int i = 0; i < p_len.length; i++) {
 			System.out.println(p_len[i]);
 		}
+	} // end displayPathLengths()
+
+
+	public void updatePath() {
+
+		if (p.LONGEST_PATH > lp_r.size()) {
+			this.lp_r = p.path_r;
+			this.lp_c = p.path_c;
+		}
+
 	}
 
-	public static void main(String[] args) {
-		System.out.println("Project 1: Sequential Monte Carlo");
+	public void storeResults(double[] p_len, ArrayList<Integer> p_rows, 
+											 ArrayList<Integer> p_cols) {
+		
+		int[] row_arr = new int[p_rows.size()];
+		int[] col_arr = new int[p_cols.size()];
 
-		// sequential MC initialization
-		int M        = (int) Math.pow(10, 7);	// iterations of MC integration
-		int dim      = 4;    					// dimension of the board
-		double omega = 0;
-		SMC simulate = new SMC();
+		// store rows, cols in arrays
+		for (int i = 0; i < row_arr.length; i++) {
+			row_arr[i] = p_rows.get(i);
+			col_arr[i] = p_cols.get(i);
+		}
 
-		int num_iter       = 24;
-		double growth_rate = 0.3;
-		double[] p_len     = new double[num_iter]; // path lengths for each iter
-		// end MC initialization
+		d.writeData(p_len,   "path_lengths"); 	// save path lengths
+		d.writeData(row_arr, "path_rows");		// save path rows
+		d.writeData(col_arr, "path_cols");		// save path cols
+	}
 
 
-		int[] ss_arr = new int[num_iter];
-		ss_arr = simulate.getSampleSize(num_iter, growth_rate);
+	public void design1(int dim, int num_iter, double rate) {
 
-		for (int i = 0; i < num_iter; i++) {
+		double[] p_len  = new double[num_iter]; // path lengths for each iter
+		int[]    ss_arr = new int[num_iter];
+		ss_arr          = this.getSampleSize(num_iter, rate);
+		double omega    = 0;
+
+
+		for (int i = 0; i < 15; i++) {
 			int samp_size = ss_arr[i];
 			// System.out.println(samp_size);
-			omega = simulate.mcIntegrate(samp_size, dim);
-			p_len[i] = omega;
+			omega = this.mcIntegrate(samp_size, dim);
+			p_len[i] = omega; // store the number of SAWs
+
+			// update path
+			this.updatePath();
 
 			System.out.println("iter " + (i+1) + ": " + omega);
 		}
 
-		System.out.println("Simulation complete");
 		System.out.println("Writing to file");
+		this.storeResults(p_len, this.lp_r, this.lp_c);
 
-		simulate.d.writeData(p_len, "path_lengths");
+	}
 
-		// simulate.displayPath(simulate.p.path_r, simulate.p.path_c);
+
+
+	public static void main(String[] args) {
+		System.out.println("Project 1: Sequential Monte Carlo");
+
+		// SMC initialization
+		SMC sim   	   = new SMC();
+		int dim        = 4;	    // dimension of the board
+		int num_iter   = 24;
+		double rate    = 0.3;
+		// end SMC initialization
+
+		sim.design1(dim, num_iter, rate);
+
 
 	} // end main()
 }

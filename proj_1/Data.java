@@ -14,13 +14,34 @@ import java.io.BufferedWriter;
 
 public class Data {
 
+	/** 
+	 * given input arry of ints, write to csv file
+	 * data written row-by-row
+	 */
+	public void writeData(double[] a, String name) {
+	    try {
+			String f_name = name + ".csv";
+	    	FileWriter data = new FileWriter(f_name);
+    		BufferedWriter writer = new BufferedWriter(data);
+           	for(int index11 = 0; index11 < a.length; index11++) {
+           		writer.write(String.valueOf(a[index11]));
+           		//writer.write(",");
+               	writer.write("\n");
+          	}
+          	writer.close();
+		}
+
+	    catch(IOException ex){
+	         ex.printStackTrace();
+	    }
+	} // end writeData()
 
 
 	/** 
 	 * given input arry of ints, write to csv file
 	 * data written row-by-row
 	 */
-	public void writeData(double[] a, String name) {
+	public void writeData(int[] a, String name) {
 	    try {
 			String f_name = name + ".csv";
 	    	FileWriter data = new FileWriter(f_name);
