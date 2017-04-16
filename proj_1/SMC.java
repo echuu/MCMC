@@ -9,9 +9,11 @@ import java.util.*;
 public class SMC {
 
 	static Prob p;
+	static Data d;
 
 	public SMC() {
 		p = new Prob();
+		d = new Data();
 	}
 
 	/*
@@ -78,6 +80,8 @@ public class SMC {
 		System.out.println();
 	} // end displayPath() function
 
+	public void writeDataToCSV()
+
 
 	public static void main(String[] args) {
 		System.out.println("Project 1: Sequential Monte Carlo");
@@ -86,13 +90,14 @@ public class SMC {
 		int dim = 4;    // dimension of the board
 		double omega = 0;
 
+		int[] path_lengths = new int[M]; // store path lengths for each iteration
+
 
 		SMC simulate = new SMC();
 		omega = simulate.mcIntegrate(M, dim);
 		// simulate.displayPath(simulate.p.path_r, simulate.p.path_c);
 
 		// # of SAWs for n = 10 (M = 10^7 to 10^8)
-
 
 
 	} // end main()
