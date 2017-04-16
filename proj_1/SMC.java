@@ -89,11 +89,9 @@ public class SMC {
 
 		SMC simulate = new SMC();
 		omega = simulate.mcIntegrate(M, dim);
-		
-
-
 		// simulate.displayPath(simulate.p.path_r, simulate.p.path_c);
 
+		// # of SAWs for n = 10 (M = 10^7 to 10^8)
 
 
 
