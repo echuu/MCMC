@@ -47,7 +47,7 @@ public class SMC {
 	 		sum += saw_i;
 	 	}
 
-	 	System.out.println("Longest path: " + p.LONGEST_PATH);
+	 	// System.out.println("Longest path: " + p.LONGEST_PATH);
 
 	 	return sum / M;
 	} // end mcIntegrate() function
@@ -80,25 +80,35 @@ public class SMC {
 		System.out.println();
 	} // end displayPath() function
 
-	public void writeDataToCSV()
-
-
 	public static void main(String[] args) {
 		System.out.println("Project 1: Sequential Monte Carlo");
 
-		int M   = 10^8;   // iterations of MC integration
-		int dim = 4;    // dimension of the board
+		// sequential MC initialization
+		int M        = (int) Math.pow(10, 7);	// iterations of MC integration
+		int dim      = 4;    					// dimension of the board
 		double omega = 0;
-
-		int[] path_lengths = new int[M]; // store path lengths for each iteration
-
-
 		SMC simulate = new SMC();
-		omega = simulate.mcIntegrate(M, dim);
+		double[] p_len  = new double[M]; 		// path lengths for each iter
+		// end MC initialization
+
+
+		for (int i = 0; i < M; i++) {
+			omega    = simulate.mcIntegrate(M, dim);
+			p_len[i] = omega;
+		}
+
+		
+		if (1 == 0) {
+			for (int i = 0; i < M; i++) {
+				System.out.println(p_len[i]);
+			}
+		}
+
+		simulate.d.writeData(p_len, "path_lengths");
+
+		//System.out.println("Value of 10^7 = " + M);
+
 		// simulate.displayPath(simulate.p.path_r, simulate.p.path_c);
-
-		// # of SAWs for n = 10 (M = 10^7 to 10^8)
-
 
 	} // end main()
 }

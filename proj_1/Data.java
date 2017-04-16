@@ -19,9 +19,10 @@ public class Data {
 	 * given input arry of ints, write to csv file
 	 * data written row-by-row
 	 */
-	public void writeData(int[] a) {
+	public void writeData(double[] a, String name) {
 	    try {
-	    	FileWriter data = new FileWriter("data.csv");
+			String f_name = name + ".csv";
+	    	FileWriter data = new FileWriter(f_name);
     		BufferedWriter writer = new BufferedWriter(data);
            	for(int index11 = 0; index11 < a.length; index11++) {
            		writer.write(String.valueOf(a[index11]));
@@ -43,7 +44,7 @@ public class Data {
 
 		Data d = new Data();
 
-		int[] arr = new int[10];
+		double[] arr = new double[10];
 
 		for (int i = 0; i < 10; i++) {
 			// int p = ;
@@ -52,7 +53,7 @@ public class Data {
 		}
 		System.out.println();
 
-		d.writeData(arr);
+		d.writeData(arr, "data");
 
 		System.out.println("Wrote array to file");
 
