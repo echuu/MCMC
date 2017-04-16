@@ -23,7 +23,7 @@ public class SMC {
 		int[][] grid = new int[n+1][n+1];
 		double g_inverse = p.inv_g(grid);
 
-		displayGrid(grid);
+		//displayGrid(grid);
 
 		return g_inverse;
 	} // end SAW() function
@@ -37,8 +37,7 @@ public class SMC {
 		double sum       = 0; // # of longest paths
 		double saw_i;
 
-		// each iteration will call spawn new grid and call inv_g()
-		// 
+		// each iteration will call spawn new grid and call inv_g() 
 	 	for (int i = 0; i < M; i++) {
 	 		// accummulate 1 / g(x_i) <=> accummulate G(x_i)
 	 		// G(x_i) is returned by calling inv_g
@@ -46,10 +45,13 @@ public class SMC {
 	 		sum += saw_i;
 	 	}
 
+	 	System.out.println("Longest path: " + p.LONGEST_PATH);
+
 	 	return sum / M;
 	} // end mcIntegrate() function
 
 
+	// display the grid -- 0 means not visited, 1 means visited
 	public static void displayGrid(int[][] grid) {
 
 		for (int r = grid.length-1; r >= 0; r--) {
@@ -59,21 +61,41 @@ public class SMC {
 			System.out.println();
 		}
 		System.out.println();
-	}
+	} // end displayGrid() function
+
+	// display the path saved by simulating the SAW
+	public void displayPath(ArrayList<Integer> rows, ArrayList<Integer> cols) {
+
+		int row_offset = rows.size() / 3;
+
+		for (int i = 0; i < rows.size(); i++) {
+
+			System.out.print("(" + rows.get(i) + ", " + cols.get(i) + ") ");
+			if (((i+1) % row_offset) == 0) {
+				System.out.println();
+			}
+		}
+		System.out.println();
+	} // end displayPath() function
 
 
 	public static void main(String[] args) {
 		System.out.println("Project 1: Sequential Monte Carlo");
 
-		int M   = 1;   // iterations of MC integration
-		int dim = 3;    // dimension of the board
+		int M   = 10^8;   // iterations of MC integration
+		int dim = 4;    // dimension of the board
 		double omega = 0;
 
 
 		SMC simulate = new SMC();
 		omega = simulate.mcIntegrate(M, dim);
+		
 
-		System.out.println("Total # of SAWs: " + omega);
+
+		// simulate.displayPath(simulate.p.path_r, simulate.p.path_c);
+
+
+
 
 	} // end main()
 }
