@@ -31,7 +31,7 @@ public class Prob {
 	 * keep track of path length
 	 * return G: product of k_j's, the inverse of g()
 	 */
-	public double inv_g(int[][] grid) {
+	public double inv_g(int[][] grid, double eps) {
 
 		double G = 1;
 		int r, c;
@@ -39,6 +39,8 @@ public class Prob {
 		int k_j = 1;
 		int p;
 		int path_length = 0;
+		double stop_criteria = (1 - eps);
+
 
 		// store paths of this iteration
 		ArrayList<Integer> curr_path_r = new ArrayList<Integer>();
@@ -107,7 +109,9 @@ public class Prob {
 			LONGEST_PATH = path_length;
 		}
 
-		return G; // g = 1/G, used in MC integration
+		stop_criteria = Math.pow(stop_criteria, path_length);
+
+		return stop_criteria * G; // g = 1/G, used in MC integration
 
 	} // end inv_g() function
 
@@ -157,6 +161,5 @@ public class Prob {
 		}
 		System.out.println();
 	}
-
 
 }

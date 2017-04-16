@@ -26,9 +26,9 @@ public class SMC {
 	 * returns the result of ONE call to g_inv()
 	 * called each time to sim SAW
 	 */
-	public static double SAW(int n) {
+	public static double SAW(int n, double eps) {
 		int[][] grid = new int[n+1][n+1];
-		double g_inverse = p.inv_g(grid);
+		double g_inverse = p.inv_g(grid, eps);
 		return g_inverse;
 	} // end SAW() function
 
@@ -37,16 +37,16 @@ public class SMC {
 	 * monte carlo integration
 	 * used to appproximate the number of SAWs
 	 */
-	public double mcIntegrate(int M, int dim) {
+	public double mcIntegrate(int M, int dim, double eps) {
 
-		double sum       = 0; // # of longest paths
+		double sum = 0; // # of longest paths
 		double saw_i;
 
 		// each iteration will call spawn new grid and call inv_g() 
 	 	for (int i = 0; i < M; i++) {
 	 		// accummulate 1 / g(x_i) <=> accummulate G(x_i)
 	 		// G(x_i) is returned by calling inv_g
-	 		saw_i = SAW(dim);
+	 		saw_i = SAW(dim, eps);
 	 		sum += saw_i;
 	 	}
 	 	// System.out.println("Longest path: " + p.LONGEST_PATH);
@@ -92,7 +92,7 @@ public class SMC {
 	public int[] getSampleSize(int n, double growth_rate) {
 		int[] num_samples = new int[n];
 
-		for (int i = 1; i <= 24; i++) {
+		for (int i = 1; i <= n; i++) {
 			double power = growth_rate * i;
 			int result = (int) Math.floor(Math.pow(10, power));
 
@@ -137,18 +137,17 @@ public class SMC {
 	}
 
 
-	public void design1(int dim, int num_iter, double rate) {
+	public void design1(int dim, int num_iter, double rate, double eps) {
 
 		double[] p_len  = new double[num_iter]; // path lengths for each iter
 		int[]    ss_arr = new int[num_iter];
 		ss_arr          = this.getSampleSize(num_iter, rate);
 		double omega    = 0;
 
-
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < num_iter; i++) {
 			int samp_size = ss_arr[i];
 			// System.out.println(samp_size);
-			omega = this.mcIntegrate(samp_size, dim);
+			omega = this.mcIntegrate(samp_size, dim, eps);
 			p_len[i] = omega; // store the number of SAWs
 
 			// update path
@@ -162,6 +161,10 @@ public class SMC {
 
 	}
 
+	public void design2(int dim, int num_iter, double rate, double eps) {
+		this.design1(dim, num_iter, rate, eps);
+	}
+
 
 
 	public static void main(String[] args) {
@@ -169,12 +172,15 @@ public class SMC {
 
 		// SMC initialization
 		SMC sim   	   = new SMC();
-		int dim        = 4;	    // dimension of the board
-		int num_iter   = 24;
-		double rate    = 0.3;
+		int dim        = 10;	    // dimension of the board
+		int num_iter   = 38;
+		double rate    = 0.2;
+		double eps     = 0.1;
 		// end SMC initialization
 
-		sim.design1(dim, num_iter, rate);
+		sim.design1(dim, num_iter, rate, 0); // 0 -> no stopping criteria 
+
+		sim.design2(dim, num_iter, rate, eps);
 
 
 	} // end main()
