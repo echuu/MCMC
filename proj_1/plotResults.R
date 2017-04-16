@@ -16,11 +16,21 @@ path_1_c = read.csv("d1_path_cols.csv", header = FALSE);
 path_2_r = read.csv("d2_path_rows.csv", header = FALSE);
 path_2_c = read.csv("d2_path_cols.csv", header = FALSE);
 
+if (1 == 0) {
+  iter = c()
+  for (n in (1:50)) {
+    rate = 0.15
+    iter = c(iter, floor(10^(rate * n)))
+  }
+}
+
+# other option
 iter = c()
 for (n in (1:38)) {
   rate = 0.2
   iter = c(iter, floor(10^(rate * n)))
 }
+
 
 saw = data.frame(iter, d1 = design_1, d2 = design_2)
 saw_long = melt(saw, id="iter")
@@ -39,7 +49,6 @@ plotSAW = function(saw_data) {
                                       10^5, 10^6, 10^7, 10^8), 10))
   
 }
-
 processPaths = function(p_rows, p_cols) {
   
   path_length = dim(p_rows)[1] - 1; ## starting point doesn't count
@@ -54,4 +63,5 @@ processPaths = function(p_rows, p_cols) {
          title = paste("SAW (length = ", path_length, ")", sep = ""))
   
 }
+
 
