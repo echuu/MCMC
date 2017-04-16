@@ -109,10 +109,10 @@ public class SMC {
 		int dim      = 4;    					// dimension of the board
 		double omega = 0;
 		SMC simulate = new SMC();
-		double[] p_len  = new double[M]; 		// path lengths for each iter
 
 		int num_iter       = 24;
 		double growth_rate = 0.3;
+		double[] p_len     = new double[num_iter]; // path lengths for each iter
 		// end MC initialization
 
 
@@ -124,6 +124,8 @@ public class SMC {
 			// System.out.println(samp_size);
 			omega = simulate.mcIntegrate(samp_size, dim);
 			p_len[i] = omega;
+
+			System.out.println("iter " + (i+1) + ": " + omega);
 		}
 
 		System.out.println("Simulation complete");
