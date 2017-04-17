@@ -18,12 +18,15 @@ design_2 = read.csv("d2_path_lengths.csv", header = FALSE);
 path_2_r = read.csv("d2_path_rows.csv", header = FALSE);
 path_2_c = read.csv("d2_path_cols.csv", header = FALSE);
 
+processPaths(path_2_r, path_2_c)
+
+
 design_3 = read.csv("d3_path_lengths.csv", header = FALSE);
 
 path_3_r = read.csv("d3_path_rows.csv", header = FALSE);
 path_3_c = read.csv("d3_path_cols.csv", header = FALSE);
 
-processPaths(path_2_r, path_2_c)
+processPaths(path_3_r, path_3_c)
 
 if (1 == 0) {
   iter = c()
@@ -39,11 +42,19 @@ iter = c()
 for (n in (1:38)) {
   rate = 0.2
   print(floor(10^(rate * n)))
-  #iter = c(iter, floor(10^(rate * n)))
+  iter = c(iter, floor(10^(rate * n)))
+}
+
+iter = c()
+for (n in (1:90)) {
+  rate = 0.09
+  print(floor(10^(rate * n)))
+  iter = c(iter, floor(10^(rate * n)))
 }
 
 
-saw = data.frame(iter, d1 = design_1$V1, d2 = design_2$V1)
+saw = data.frame(iter, d1 = design_1$V1, d2 = design_2$V1,
+                       d3 = design_3$V1)
 saw_long = melt(saw, id="iter")
 
 
