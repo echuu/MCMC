@@ -18,14 +18,19 @@ design_2 = read.csv("d2_path_lengths.csv", header = FALSE);
 path_2_r = read.csv("d2_path_rows.csv", header = FALSE);
 path_2_c = read.csv("d2_path_cols.csv", header = FALSE);
 
+design_3 = read.csv("d3_path_lengths.csv", header = FALSE);
+
+path_3_r = read.csv("d3_path_rows.csv", header = FALSE);
+path_3_c = read.csv("d3_path_cols.csv", header = FALSE);
+
 processPaths(path_2_r, path_2_c)
 
 if (1 == 0) {
   iter = c()
   for (n in (1:50)) {
     rate = 0.16
-    print(floor(10^(rate * n)))
-    # iter = c(iter, floor(10^(rate * n)))
+    #print(floor(10^(rate * n)))
+    iter = c(iter, floor(10^(rate * n)))
   }
 }
 

@@ -14,6 +14,8 @@ public class SMC {
 	static ArrayList<Integer> lp_r; // store row values of longest path
 	static ArrayList<Integer> lp_c; // store row values of longest path
 
+	static ArrayList<Double>  wts; // store the weights used in MC integration
+
 	double EPSILON = 0.1;
 
 	public SMC() {
@@ -22,6 +24,7 @@ public class SMC {
 
 		lp_r = new ArrayList<Integer>();
 		lp_c = new ArrayList<Integer>();
+		wts  = new ArrayList<Double>();
 	}
 
 	/*
@@ -51,7 +54,7 @@ public class SMC {
 	 */
 	public static double SAW_3(int n, int num_child) {
 		int[][] grid = new int[n+1][n+1];
-		double g_inverse = p.inv_g2(grid, num_child);
+		double g_inverse = p.inv_g3(grid, num_child);
 		return g_inverse;
 	} // end SAW_3() function
 
@@ -76,7 +79,8 @@ public class SMC {
 	 		} else {
 	 			saw_i = SAW_3(dim, num_child);
 	 		}
-	 			
+	 		
+	 		wts.add(saw_i);
 	 		sum += saw_i;
 	 	}
 	 	// System.out.println("Longest path: " + p.LONGEST_PATH);
@@ -151,16 +155,22 @@ public class SMC {
 
 	public void storeResults(double[] p_len, ArrayList<Integer> p_rows, 
 											 ArrayList<Integer> p_cols,
+											 ArrayList<Double>  wts,
 											 int design) {
 		
-		int[] row_arr = new int[p_rows.size()];
-		int[] col_arr = new int[p_cols.size()];
+		int[] row_arr   = new int[p_rows.size()];
+		int[] col_arr   = new int[p_cols.size()];
+		double[] wt_arr = new double[wts.size()];
 		String prefix = "";
 
 		// store rows, cols in arrays
 		for (int i = 0; i < row_arr.length; i++) {
 			row_arr[i] = p_rows.get(i);
 			col_arr[i] = p_cols.get(i);
+		}
+
+		for (int i = 0; i < wt_arr.length; i++) {
+			wt_arr[i] = wts.get(i);
 		}
 
 		if (design == 1) {
@@ -171,13 +181,14 @@ public class SMC {
 			prefix = "d3_";
 		}
 
-		d.writeData(p_len,   prefix+"path_lengths"); 	// save path lengths
-		d.writeData(row_arr, prefix+"path_rows");		// save path rows
-		d.writeData(col_arr, prefix+"path_cols");		// save path cols
+		d.writeData( p_len,   prefix + "path_lengths"); 	// save path lengths
+		d.writeData( row_arr, prefix + "path_rows");		// save path rows
+		d.writeData( col_arr, prefix + "path_cols");		// save path cols
+		d.writeData( wt_arr,  prefix + "weights");
 	}
 
 
-	public void design3(int dim, int num_iter, double rate) {
+	public void design1(int dim, int num_iter, double rate) {
 
 		double[] p_len  = new double[num_iter]; // path lengths for each iter
 		int[]    ss_arr = new int[num_iter];
@@ -195,10 +206,12 @@ public class SMC {
 
 			System.out.println("iter " + (i+1) + ": " + omega +
 			 	" -- longest: " + p.LONGEST_PATH);
+
+			p.LONGEST_PATH = 0;
 		}
 
 		System.out.println("Writing to file");
-		this.storeResults(p_len, this.lp_r, this.lp_c, 1);
+		this.storeResults(p_len, this.lp_r, this.lp_c, this.wts, 1);
 
 	}
 
@@ -220,10 +233,12 @@ public class SMC {
 
 			System.out.println("iter " + (i+1) + ": " + omega +
 			 	" -- longest: " + p.LONGEST_PATH);
+
+			p.LONGEST_PATH = 0;
 		}
 
 		System.out.println("Writing to file");
-		this.storeResults(p_len, this.lp_r, this.lp_c, 2);
+		this.storeResults(p_len, this.lp_r, this.lp_c, this.wts, 2);
 	}
 
 
@@ -248,39 +263,38 @@ public class SMC {
 		}
 
 		System.out.println("Writing to file");
-		this.storeResults(p_len, this.lp_r, this.lp_c, 3);
+		this.storeResults(p_len, this.lp_r, this.lp_c, this.wts, 3);
 
 	}
-
-
 
 
 	public static void main(String[] args) {
 		System.out.println("Project 1: Sequential Monte Carlo");
 
 		// SMC initialization
-		SMC sim   	   = new SMC();
+		SMC sim1, sim2, sim3;
 		int dim        = 10;	    // dimension of the board
-		int num_iter   = 38;
-		double rate    = 0.2;
+		int num_iter   = 15;
+		double rate    = 0.4;
 		double eps     = 0.1;
 		// end SMC initialization
 
-
-		/*
+		
 		System.out.println("Start design 1");
-		sim.design1(dim, num_iter, rate); // 0 -> no stopping criteria
+		sim1 = new SMC();
+		sim1.design1(dim, num_iter, rate); // 0 -> no stopping criteria
+		sim1 = null;
 
 
 		System.out.println("Start design 2");
-		sim = new SMC(); // clear contents
-
-		sim.design2(dim, num_iter, rate, eps);
-		*/
+		sim2 = new SMC();
+		sim2.design2(dim, num_iter, rate, eps);
+		sim2 = null;
+		
 
 		System.out.println("Start design 3");
-		sim.design3(dim, num_iter, rate, 5);
-
+		sim3 = new SMC();
+		//sim3.design3(dim, num_iter, rate, 5);
 
 	} // end main()
 }
