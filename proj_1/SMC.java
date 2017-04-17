@@ -14,6 +14,8 @@ public class SMC {
 	static ArrayList<Integer> lp_r; // store row values of longest path
 	static ArrayList<Integer> lp_c; // store row values of longest path
 
+	double EPSILON = 0.1;
+
 	public SMC() {
 		p = new Prob();
 		d = new Data();
@@ -26,18 +28,27 @@ public class SMC {
 	 * returns the result of ONE call to g_inv()
 	 * called each time to sim SAW
 	 */
-	public static double SAW(int n, double eps) {
+	public static double SAW(int n) {
 		int[][] grid = new int[n+1][n+1];
-		double g_inverse = p.inv_g(grid, eps);
+		double g_inverse = p.inv_g(grid);
 		return g_inverse;
 	} // end SAW() function
 
+	/*
+	 * returns the result of ONE call to g_inv()
+	 * called each time to sim SAW
+	 */
+	public static double SAW_2(int n, double eps) {
+		int[][] grid = new int[n+1][n+1];
+		double g_inverse = p.inv_g2(grid, eps);
+		return g_inverse;
+	} // end SAW() function
 
 	/**
 	 * monte carlo integration
 	 * used to appproximate the number of SAWs
 	 */
-	public double mcIntegrate(int M, int dim, double eps) {
+	public double mcIntegrate(int M, int dim, int design) {
 
 		double sum = 0; // # of longest paths
 		double saw_i;
@@ -46,7 +57,12 @@ public class SMC {
 	 	for (int i = 0; i < M; i++) {
 	 		// accummulate 1 / g(x_i) <=> accummulate G(x_i)
 	 		// G(x_i) is returned by calling inv_g
-	 		saw_i = SAW(dim, eps);
+	 		if (design == 1) {
+	 			saw_i = SAW(dim);
+	 		} else {
+	 			saw_i = SAW_2(dim, this.EPSILON);
+	 		}
+	 			
 	 		sum += saw_i;
 	 	}
 	 	// System.out.println("Longest path: " + p.LONGEST_PATH);
@@ -121,11 +137,11 @@ public class SMC {
 
 	public void storeResults(double[] p_len, ArrayList<Integer> p_rows, 
 											 ArrayList<Integer> p_cols,
-											 double eps) {
+											 int design) {
 		
 		int[] row_arr = new int[p_rows.size()];
 		int[] col_arr = new int[p_cols.size()];
-		String prefix;
+		String prefix = "";
 
 		// store rows, cols in arrays
 		for (int i = 0; i < row_arr.length; i++) {
@@ -133,9 +149,9 @@ public class SMC {
 			col_arr[i] = p_cols.get(i);
 		}
 
-		if (eps == 0) {
+		if (design == 1) {
 			prefix = "d1_";
-		} else {
+		} else if (design == 2) {
 			prefix = "d2_"; 
 		}
 
@@ -145,7 +161,7 @@ public class SMC {
 	}
 
 
-	public void design1(int dim, int num_iter, double rate, double eps) {
+	public void design1(int dim, int num_iter, double rate) {
 
 		double[] p_len  = new double[num_iter]; // path lengths for each iter
 		int[]    ss_arr = new int[num_iter];
@@ -155,7 +171,7 @@ public class SMC {
 		for (int i = 0; i < num_iter; i++) {
 			int samp_size = ss_arr[i];
 			// System.out.println(samp_size);
-			omega = this.mcIntegrate(samp_size, dim, eps);
+			omega = this.mcIntegrate(samp_size, dim, 1);
 			p_len[i] = omega; // store the number of SAWs
 
 			// update path
@@ -165,12 +181,31 @@ public class SMC {
 		}
 
 		System.out.println("Writing to file");
-		this.storeResults(p_len, this.lp_r, this.lp_c, eps);
+		this.storeResults(p_len, this.lp_r, this.lp_c, 1);
 
 	}
 
 	public void design2(int dim, int num_iter, double rate, double eps) {
-		this.design1(dim, num_iter, rate, eps);
+
+		double[] p_len  = new double[num_iter]; // path lengths for each iter
+		int[]    ss_arr = new int[num_iter];
+		ss_arr          = this.getSampleSize(num_iter, rate);
+		double omega    = 0;
+
+		for (int i = 0; i < num_iter; i++) {
+			int samp_size = ss_arr[i];
+			// System.out.println(samp_size);
+			omega = this.mcIntegrate(samp_size, dim, 2);
+			p_len[i] = omega; // store the number of SAWs
+
+			// update path
+			this.updatePath();
+
+			System.out.println("iter " + (i+1) + ": " + omega);
+		}
+
+		System.out.println("Writing to file");
+		this.storeResults(p_len, this.lp_r, this.lp_c, 2);
 	}
 
 
@@ -187,12 +222,12 @@ public class SMC {
 		// end SMC initialization
 
 
-		System.out.println("Start design 1");
-		sim.design1(dim, num_iter, rate, 0); // 0 -> no stopping criteria
+//		System.out.println("Start design 1");
+//		sim.design1(dim, num_iter, rate); // 0 -> no stopping criteria
 
 
 		System.out.println("Start design 2");
-		sim = new SMC(); // clear contents
+		//sim = new SMC(); // clear contents
 
 		sim.design2(dim, num_iter, rate, eps);
 

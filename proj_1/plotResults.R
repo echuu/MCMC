@@ -7,14 +7,19 @@ library(reshape)
 # read in data
 processPaths() ## generate plot for longest SAW
 
-design_1 = read.csv("d1_path_lengths.csv")[,2];
-design_2 = read.csv("d2_path_lengths.csv")[,2];
+design_1 = read.csv("d1_path_lengths.csv", header = FALSE);
 
 path_1_r = read.csv("d1_path_rows.csv", header = FALSE);
 path_1_c = read.csv("d1_path_cols.csv", header = FALSE);
 
+processPaths(path_1_r, path_1_c)
+
+design_2 = read.csv("d2_path_lengths.csv", header = FALSE);
+
 path_2_r = read.csv("d2_path_rows.csv", header = FALSE);
 path_2_c = read.csv("d2_path_cols.csv", header = FALSE);
+
+processPaths(path_2_r, path_2_c)
 
 if (1 == 0) {
   iter = c()
@@ -32,7 +37,7 @@ for (n in (1:38)) {
 }
 
 
-saw = data.frame(iter, d1 = design_1, d2 = design_2)
+saw = data.frame(iter, d1 = design_1$V1, d2 = design_2$V1)
 saw_long = melt(saw, id="iter")
 
 

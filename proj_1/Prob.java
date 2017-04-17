@@ -14,6 +14,7 @@ public class Prob {
 	private static final int DOWN  = 1;
 	private static final int RIGHT = 2;
 	private static final int LEFT  = 3;
+	private static final int STOP  = -1;
 
 	static int LONGEST_PATH = 0;
 
@@ -25,13 +26,14 @@ public class Prob {
 		path_c = new ArrayList<Integer>();
 	}
 
+
 	/**
-	 * design the probability used for monte carlo integration
-	 * simulate a complete SAW
-	 * keep track of path length
-	 * return G: product of k_j's, the inverse of g()
+	 * different design for probability distribution of SAWs
+	 * eps = probability of stopping at each step
+	 * return inverse of g, which is the weight summed at each
+	 * iteration of SMC
 	 */
-	public double inv_g(int[][] grid, double eps) {
+	public double inv_g2(int[][] grid, double eps) {
 
 		double G = 1;
 		int r, c;
@@ -39,7 +41,110 @@ public class Prob {
 		int k_j = 1;
 		int p;
 		int path_length = 0;
-		double stop_criteria = (1 - eps);
+
+		int premature_stop = 0;
+
+		// store paths of this iteration
+		ArrayList<Integer> curr_path_r = new ArrayList<Integer>();
+		ArrayList<Integer> curr_path_c = new ArrayList<Integer>();
+
+
+		// initialize grid at (0,0): mark as visited, add to path
+		r = 0;
+		c = 0;
+		grid[r][c]++; 
+		curr_path_r.add(r);
+		curr_path_c.add(c);		
+		// end grid initialization
+
+		//displayGrid(grid);
+		ArrayList<Integer> validMoves = new ArrayList<Integer>();
+
+		// while path satisfies SAW condition
+		while(true) {
+
+			// find valid moves
+			findValidMoves(r, c, grid, validMoves);
+			
+			// randomly determine next move from valid moves
+			k_j = validMoves.size(); // can be zero, check when re-enter
+
+			if (k_j == 0) { // no possible moves -- SAW complete
+				break;
+			} 
+			
+			// probability of early termination = 0.1
+			boolean terminate = new Random().nextInt(10) == 0;
+			if (terminate == true) {
+				move = STOP;
+			} else {
+				p    = new Random().nextInt(k_j);
+				move = validMoves.get(p);
+			}
+
+			// make move -- move needs to be saved
+			switch(move) {
+				case UP:     r++;
+						     break;
+				case DOWN:   r--;
+						     break;
+				case RIGHT:  c++;
+						     break;
+				case LEFT:   c--;
+						     break;
+				case STOP:   premature_stop++;
+							 break;
+				default:     System.out.println("Error -- no move made");
+						     break;
+			} // end switch
+
+
+			if (premature_stop == 1) {
+				G = G * eps;
+				break; // terminate SAW
+			}
+
+
+			// update grid, path: mark new position as visited
+			grid[r][c]++;
+			path_length++;
+			curr_path_r.add(r);
+			curr_path_c.add(c);	
+			// finished updating path
+			
+			// running product of k_j's, 
+			// k_j = # of possible paths at each point
+			G = G * k_j / (1 - eps);
+
+		} // end while()
+
+
+		// update longest path
+		if (path_length > LONGEST_PATH) {
+			path_r = curr_path_r;
+			path_c = curr_path_c;
+			LONGEST_PATH = path_length;
+		}
+
+		return G; // g = 1/G, used in MC integration
+	}
+
+
+
+	/**
+	 * design the probability used for monte carlo integration
+	 * simulate a complete SAW
+	 * keep track of path length
+	 * return G: product of k_j's, the inverse of g()
+	 */
+	public double inv_g(int[][] grid) {
+
+		double G = 1;
+		int r, c;
+		int move;
+		int k_j = 1;
+		int p;
+		int path_length = 0;
 
 
 		// store paths of this iteration
@@ -109,9 +214,7 @@ public class Prob {
 			LONGEST_PATH = path_length;
 		}
 
-		stop_criteria = 1 / Math.pow(stop_criteria, path_length);
-
-		return stop_criteria * G; // g = 1/G, used in MC integration
+		return G; // g = 1/G, used in MC integration
 
 	} // end inv_g() function
 
