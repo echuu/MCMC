@@ -42,13 +42,25 @@ public class SMC {
 		int[][] grid = new int[n+1][n+1];
 		double g_inverse = p.inv_g2(grid, eps);
 		return g_inverse;
-	} // end SAW() function
+	} // end SAW_2() function
+
+
+	/*
+	 * returns the result of ONE call to g_inv()
+	 * called each time to sim SAW
+	 */
+	public static double SAW_3(int n, int num_child) {
+		int[][] grid = new int[n+1][n+1];
+		double g_inverse = p.inv_g2(grid, num_child);
+		return g_inverse;
+	} // end SAW_3() function
+
 
 	/**
 	 * monte carlo integration
 	 * used to appproximate the number of SAWs
 	 */
-	public double mcIntegrate(int M, int dim, int design) {
+	public double mcIntegrate(int M, int dim, int design, int num_child) {
 
 		double sum = 0; // # of longest paths
 		double saw_i;
@@ -59,8 +71,10 @@ public class SMC {
 	 		// G(x_i) is returned by calling inv_g
 	 		if (design == 1) {
 	 			saw_i = SAW(dim);
-	 		} else {
+	 		} else if (design == 2) {
 	 			saw_i = SAW_2(dim, this.EPSILON);
+	 		} else {
+	 			saw_i = SAW_3(dim, num_child);
 	 		}
 	 			
 	 		sum += saw_i;
@@ -153,6 +167,8 @@ public class SMC {
 			prefix = "d1_";
 		} else if (design == 2) {
 			prefix = "d2_"; 
+		} else {
+			prefix = "d3_";
 		}
 
 		d.writeData(p_len,   prefix+"path_lengths"); 	// save path lengths
@@ -161,7 +177,7 @@ public class SMC {
 	}
 
 
-	public void design1(int dim, int num_iter, double rate) {
+	public void design3(int dim, int num_iter, double rate) {
 
 		double[] p_len  = new double[num_iter]; // path lengths for each iter
 		int[]    ss_arr = new int[num_iter];
@@ -171,13 +187,14 @@ public class SMC {
 		for (int i = 0; i < num_iter; i++) {
 			int samp_size = ss_arr[i];
 			// System.out.println(samp_size);
-			omega = this.mcIntegrate(samp_size, dim, 1);
+			omega = this.mcIntegrate(samp_size, dim, 1, 0);
 			p_len[i] = omega; // store the number of SAWs
 
 			// update path
 			this.updatePath();
 
-			System.out.println("iter " + (i+1) + ": " + omega);
+			System.out.println("iter " + (i+1) + ": " + omega +
+			 	" -- longest: " + p.LONGEST_PATH);
 		}
 
 		System.out.println("Writing to file");
@@ -195,13 +212,14 @@ public class SMC {
 		for (int i = 0; i < num_iter; i++) {
 			int samp_size = ss_arr[i];
 			// System.out.println(samp_size);
-			omega = this.mcIntegrate(samp_size, dim, 2);
+			omega = this.mcIntegrate(samp_size, dim, 2, 0);
 			p_len[i] = omega; // store the number of SAWs
 
 			// update path
 			this.updatePath();
 
-			System.out.println("iter " + (i+1) + ": " + omega);
+			System.out.println("iter " + (i+1) + ": " + omega +
+			 	" -- longest: " + p.LONGEST_PATH);
 		}
 
 		System.out.println("Writing to file");
@@ -209,53 +227,31 @@ public class SMC {
 	}
 
 
-	public int childSAW(int grid[][], int p_len,
-						int prev_move, int r, int c,
-						ArrayList<Integer> path_r, ArrayList<Integer> path_c) {
+	public void design3(int dim, int num_iter, double rate, int num_child) {
 
-		int k_j;
+		double[] p_len  = new double[num_iter]; // path lengths for each iter
+		int[]    ss_arr = new int[num_iter];
+		ss_arr          = this.getSampleSize(num_iter, rate);
+		double omega    = 0;
 
-		int child_grid[][] = grid;
-		int child_plen = p_len;
-		// store paths of this iteration
-		ArrayList<Integer> ch_path_r = path_r;
-		ArrayList<Integer> ch_path_c = path_c;
+		for (int i = 0; i < num_iter; i++) {
+			int samp_size = ss_arr[i];
+			// System.out.println(samp_size);
+			omega = this.mcIntegrate(samp_size, dim, 1, num_child);
+			p_len[i] = omega; // store the number of SAWs
 
+			// update path
+			this.updatePath();
 
-		ArrayList<Integer> childValidMoves = new ArrayList<Integer>();
-
-		while (true)
-			findValidMoves(r, c, grid, childValidMoves);
-			k_j = validMoves.size();
-
-			if (k_j == 0) {
-				break;
-			}
-			p     = new Random().nextInt(k_j);
-			move  = validMoves.get(p);
-
-			// make move -- move needs to be saved
-			switch(move) {
-				case UP:     r++;
-						     break;
-				case DOWN:   r--;
-						     break;
-				case RIGHT:  c++;
-						     break;
-				case LEFT:   c--;
-						     break;
-				default:     System.out.println("Error -- no move made");
-						     break;
-			} // end switch
-
-			child_grid[r][c]++;
-			child_plen++;
-
-
-
-
+			System.out.println("iter " + (i+1) + ": " + omega +
+			 	" -- longest: " + p.LONGEST_PATH);
 		}
+
+		System.out.println("Writing to file");
+		this.storeResults(p_len, this.lp_r, this.lp_c, 3);
+
 	}
+
 
 
 
@@ -265,12 +261,13 @@ public class SMC {
 		// SMC initialization
 		SMC sim   	   = new SMC();
 		int dim        = 10;	    // dimension of the board
-		int num_iter   = 50;
-		double rate    = 0.16;
+		int num_iter   = 38;
+		double rate    = 0.2;
 		double eps     = 0.1;
 		// end SMC initialization
 
 
+		/*
 		System.out.println("Start design 1");
 		sim.design1(dim, num_iter, rate); // 0 -> no stopping criteria
 
@@ -279,6 +276,10 @@ public class SMC {
 		sim = new SMC(); // clear contents
 
 		sim.design2(dim, num_iter, rate, eps);
+		*/
+
+		System.out.println("Start design 3");
+		sim.design3(dim, num_iter, rate, 5);
 
 
 	} // end main()

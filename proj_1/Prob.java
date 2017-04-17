@@ -33,7 +33,7 @@ public class Prob {
 	 * for any walk longer than 50, generate u = 5 more children
 	 * reweigh each of these children by w0 = w / u
 	 */
-	public double inv_g3(int[][] grid) {
+	public double inv_g3(int[][] grid, int num_child) {
 
 		double G = 1;
 		int r, c;
@@ -106,10 +106,16 @@ public class Prob {
 			// finished updating path
 
 			if (path_length > 50) {
-				double k_star = 1 / 5 * this.childSAW(grid, 5);
-				G = G / k_j * k_star;		
-			}
+				double k_star = 0;
+				for (int i = 0; i < num_child; i++) {
+					k_star += this.childSAW(grid, path_length,
+									r, c, curr_path_r, curr_path_c);
+				}
 
+				k_star = 1 / num_child * k_star; // average of the child results
+				G = G / k_j * k_star;	
+				break;
+			}
 
 			// running product of k_j's, 
 			// k_j = # of possible paths at each point
@@ -126,6 +132,72 @@ public class Prob {
 		}
 
 		return G; // g = 1/G, used in MC integration
+	}
+
+
+	public int childSAW(int grid[][], int p_len,
+					int r, int c,
+					ArrayList<Integer> path_r, ArrayList<Integer> path_c) {
+
+		int k_j = 1;
+
+		int G_hat = 1;
+
+		int child_grid[][] = grid;
+		int child_plen = p_len;
+		int p;
+		int move;
+		
+		// store paths of this iteration
+		ArrayList<Integer> ch_path_r = path_r;
+		ArrayList<Integer> ch_path_c = path_c;
+
+		ArrayList<Integer> childValidMoves = new ArrayList<Integer>();
+
+		while (true) {
+			findValidMoves(r, c, grid, childValidMoves);
+			k_j = childValidMoves.size();
+
+			if (k_j == 0) {
+				break;
+			}
+
+			p     = new Random().nextInt(k_j);
+			move  = childValidMoves.get(p);
+
+			// make move -- move needs to be saved
+			switch(move) {
+				case UP:     r++;
+						     break;
+				case DOWN:   r--;
+						     break;
+				case RIGHT:  c++;
+						     break;
+				case LEFT:   c--;
+						     break;
+				default:     System.out.println("Error -- no move made");
+						     break;
+			} // end switch
+
+			// update child path
+			child_grid[r][c]++;
+			child_plen++;
+			ch_path_r.add(r);
+			ch_path_c.add(c);
+			// finish updateing child path
+
+			G_hat = G_hat * k_j;
+		}
+		
+
+		if (child_plen > LONGEST_PATH) {
+			path_r = ch_path_r;
+			path_c = ch_path_c;
+			this.LONGEST_PATH = child_plen;
+		}
+
+
+		return G_hat; 
 	}
 
 
