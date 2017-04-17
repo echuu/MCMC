@@ -209,6 +209,55 @@ public class SMC {
 	}
 
 
+	public int childSAW(int grid[][], int p_len,
+						int prev_move, int r, int c,
+						ArrayList<Integer> path_r, ArrayList<Integer> path_c) {
+
+		int k_j;
+
+		int child_grid[][] = grid;
+		int child_plen = p_len;
+		// store paths of this iteration
+		ArrayList<Integer> ch_path_r = path_r;
+		ArrayList<Integer> ch_path_c = path_c;
+
+
+		ArrayList<Integer> childValidMoves = new ArrayList<Integer>();
+
+		while (true)
+			findValidMoves(r, c, grid, childValidMoves);
+			k_j = validMoves.size();
+
+			if (k_j == 0) {
+				break;
+			}
+			p     = new Random().nextInt(k_j);
+			move  = validMoves.get(p);
+
+			// make move -- move needs to be saved
+			switch(move) {
+				case UP:     r++;
+						     break;
+				case DOWN:   r--;
+						     break;
+				case RIGHT:  c++;
+						     break;
+				case LEFT:   c--;
+						     break;
+				default:     System.out.println("Error -- no move made");
+						     break;
+			} // end switch
+
+			child_grid[r][c]++;
+			child_plen++;
+
+
+
+
+		}
+	}
+
+
 
 	public static void main(String[] args) {
 		System.out.println("Project 1: Sequential Monte Carlo");
@@ -216,18 +265,18 @@ public class SMC {
 		// SMC initialization
 		SMC sim   	   = new SMC();
 		int dim        = 10;	    // dimension of the board
-		int num_iter   = 38;
-		double rate    = 0.2;
+		int num_iter   = 50;
+		double rate    = 0.16;
 		double eps     = 0.1;
 		// end SMC initialization
 
 
-//		System.out.println("Start design 1");
-//		sim.design1(dim, num_iter, rate); // 0 -> no stopping criteria
+		System.out.println("Start design 1");
+		sim.design1(dim, num_iter, rate); // 0 -> no stopping criteria
 
 
 		System.out.println("Start design 2");
-		//sim = new SMC(); // clear contents
+		sim = new SMC(); // clear contents
 
 		sim.design2(dim, num_iter, rate, eps);
 

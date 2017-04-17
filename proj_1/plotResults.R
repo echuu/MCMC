@@ -5,7 +5,6 @@ library(reshape)
 
 
 # read in data
-processPaths() ## generate plot for longest SAW
 
 design_1 = read.csv("d1_path_lengths.csv", header = FALSE);
 
@@ -24,8 +23,9 @@ processPaths(path_2_r, path_2_c)
 if (1 == 0) {
   iter = c()
   for (n in (1:50)) {
-    rate = 0.15
-    iter = c(iter, floor(10^(rate * n)))
+    rate = 0.16
+    print(floor(10^(rate * n)))
+    # iter = c(iter, floor(10^(rate * n)))
   }
 }
 
@@ -33,7 +33,8 @@ if (1 == 0) {
 iter = c()
 for (n in (1:38)) {
   rate = 0.2
-  iter = c(iter, floor(10^(rate * n)))
+  print(floor(10^(rate * n)))
+  #iter = c(iter, floor(10^(rate * n)))
 }
 
 

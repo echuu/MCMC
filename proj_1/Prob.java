@@ -28,6 +28,108 @@ public class Prob {
 
 
 	/**
+	 * 3rd design for distribution of SAWs
+	 * Favor long walks
+	 * for any walk longer than 50, generate u = 5 more children
+	 * reweigh each of these children by w0 = w / u
+	 */
+	public double inv_g3(int[][] grid) {
+
+		double G = 1;
+		int r, c;
+		int move;
+		int k_j = 1;
+		int p;
+		int path_length = 0;
+
+
+		// store paths of this iteration
+		ArrayList<Integer> curr_path_r = new ArrayList<Integer>();
+		ArrayList<Integer> curr_path_c = new ArrayList<Integer>();
+
+
+		// initialize grid at (0,0): mark as visited, add to path
+		r = 0;
+		c = 0;
+		grid[r][c]++; 
+		curr_path_r.add(r);
+		curr_path_c.add(c);		
+		// end grid initialization
+
+		//displayGrid(grid);
+		ArrayList<Integer> validMoves = new ArrayList<Integer>();
+
+		// while path satisfies SAW condition
+		while(true) {
+
+			// find valid moves
+			findValidMoves(r, c, grid, validMoves);
+			
+			// randomly determine next move from valid moves
+			k_j = validMoves.size(); // can be zero, check when re-enter
+
+			if (k_j == 0) { // no possible moves -- SAW complete
+
+				/*
+				if (path_length > 50) {
+					// generate u = 5 children
+					double k_star = 1 / 5 * this.childSAW(grid, 5);
+					G = G / k_j * k_star;
+				}
+				*/
+
+				break;
+			}
+
+			p     = new Random().nextInt(k_j);
+			move  = validMoves.get(p);
+
+			// make move -- move needs to be saved
+			switch(move) {
+				case UP:     r++;
+						     break;
+				case DOWN:   r--;
+						     break;
+				case RIGHT:  c++;
+						     break;
+				case LEFT:   c--;
+						     break;
+				default:     System.out.println("Error -- no move made");
+						     break;
+			} // end switch
+
+			// update grid, path: mark new position as visited
+			grid[r][c]++;
+			path_length++;
+			curr_path_r.add(r);
+			curr_path_c.add(c);	
+			// finished updating path
+
+			if (path_length > 50) {
+				double k_star = 1 / 5 * this.childSAW(grid, 5);
+				G = G / k_j * k_star;		
+			}
+
+
+			// running product of k_j's, 
+			// k_j = # of possible paths at each point
+			G = G * k_j;
+
+		} // end while()
+
+
+		// update longest path
+		if (path_length > LONGEST_PATH) {
+			path_r = curr_path_r;
+			path_c = curr_path_c;
+			LONGEST_PATH = path_length;
+		}
+
+		return G; // g = 1/G, used in MC integration
+	}
+
+
+	/**
 	 * different design for probability distribution of SAWs
 	 * eps = probability of stopping at each step
 	 * return inverse of g, which is the weight summed at each
