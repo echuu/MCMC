@@ -3,6 +3,7 @@ library(dplyr)
 library(tidyr)
 library(reshape)
 
+
 # read in data
 
 design_1 = read.csv("d1_path_lengths.csv", header = FALSE);
@@ -27,23 +28,6 @@ path_3_c = read.csv("d3_path_cols.csv", header = FALSE);
 
 processPaths(path_3_r, path_3_c)
 
-if (1 == 0) {
-  iter = c()
-  for (n in (1:50)) {
-    rate = 0.16
-    #print(floor(10^(rate * n)))
-    iter = c(iter, floor(10^(rate * n)))
-  }
-}
-
-# other option
-iter = c()
-for (n in (1:38)) {
-  rate = 0.2
-  print(floor(10^(rate * n)))
-  iter = c(iter, floor(10^(rate * n)))
-}
-
 iter = c()
 for (n in (1:90)) {
   rate = 0.09
@@ -55,7 +39,6 @@ for (n in (1:90)) {
 saw = data.frame(iter, d1 = design_1$V1, d2 = design_2$V1,
                        d3 = design_3$V1)
 
-saw = data.frame(iter, d1 = design_1$V1, d2 = design_2$V1)
 saw_long = melt(saw, id="iter")
 
 
@@ -72,8 +55,6 @@ plotSAW = function(saw_data) {
                                       10^5, 10^6, 10^7, 10^8), 10))
   
 }
-
-
 processPaths = function(p_rows, p_cols) {
   
   path_length = dim(p_rows)[1] - 1; ## starting point doesn't count
@@ -90,4 +71,5 @@ processPaths = function(p_rows, p_cols) {
     scale_y_continuous(breaks = c(0:10))
   
 }
+
 

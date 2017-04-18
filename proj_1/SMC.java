@@ -252,7 +252,7 @@ public class SMC {
 		for (int i = 0; i < num_iter; i++) {
 			int samp_size = ss_arr[i];
 			// System.out.println(samp_size);
-			omega = this.mcIntegrate(samp_size, dim, 1, num_child);
+			omega = this.mcIntegrate(samp_size, dim, 3, num_child);
 			p_len[i] = omega; // store the number of SAWs
 
 			// update path
@@ -274,8 +274,8 @@ public class SMC {
 		// SMC initialization
 		SMC sim1, sim2, sim3;
 		int dim        = 10;	    // dimension of the board
-		int num_iter   = 90;
-		double rate    = 0.09;
+		int num_iter   = 50;
+		double rate    = 0.16;
 		double eps     = 0.1;
 		// end SMC initialization
 		
@@ -287,11 +287,11 @@ public class SMC {
 		System.out.println("Start design 2");
 		sim2 = new SMC();
 		sim2.design2(dim, num_iter, rate, eps);
-		
 
+/*
 		System.out.println("Start design 3");
 		sim3 = new SMC();
 		sim3.design3(dim, num_iter, rate, 5);
-
+*/
 	} // end main()
 }

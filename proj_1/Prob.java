@@ -35,6 +35,8 @@ public class Prob {
 	 */
 	public double inv_g3(int[][] grid, int num_child) {
 
+		//System.out.println("inside 3rd design");
+
 		double G = 1;
 		int r, c;
 		int move;
@@ -77,7 +79,11 @@ public class Prob {
 					G = G / k_j * k_star;
 				}
 				*/
-
+				/*
+				if (r == (grid.length-1) && c == (grid.length-1)) {
+					G = 0;
+				}
+				*/
 				break;
 			}
 
@@ -244,6 +250,11 @@ public class Prob {
 			k_j = validMoves.size(); // can be zero, check when re-enter
 
 			if (k_j == 0) { // no possible moves -- SAW complete
+
+				if ((r != (grid.length-1)) && (c != (grid.length-1))) {
+					G = 0;
+				}
+				
 				break;
 			} 
 			
@@ -294,7 +305,8 @@ public class Prob {
 
 
 		// update longest path
-		if (path_length > LONGEST_PATH) {
+		if ((path_length > LONGEST_PATH) && (r == (grid.length-1) &&
+											 c == (grid.length-1))) {
 			path_r = curr_path_r;
 			path_c = curr_path_c;
 			LONGEST_PATH = path_length;
@@ -347,6 +359,11 @@ public class Prob {
 			k_j = validMoves.size(); // can be zero, check when re-enter
 
 			if (k_j == 0) { // no possible moves -- SAW complete
+					
+				if ((r != (grid.length-1)) && (c != (grid.length-1))) {
+					G = 0;
+				}
+
 				break;
 			}
 
@@ -382,7 +399,8 @@ public class Prob {
 
 
 		// update longest path
-		if (path_length > LONGEST_PATH) {
+		if ((path_length > LONGEST_PATH) && (r == (grid.length-1) &&
+											 c == (grid.length-1))) {
 			path_r = curr_path_r;
 			path_c = curr_path_c;
 			LONGEST_PATH = path_length;
