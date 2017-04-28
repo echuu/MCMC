@@ -237,7 +237,7 @@ For $K_2$, we draw the transition graph diagram and see that all states can be r
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width = 1\columnwidth]{eigen_values}
+\includegraphics[width = 1 \columnwidth]{eigen_values}
 \caption{Left: Eigenvalues for $K_0$. Center: Eigenvalues for $K_0^{50}$. Right: Eigenvalues for $K_0^{200}$}
 \end{center}
 \end{figure}
@@ -261,7 +261,14 @@ K_0^{200} =
 
 \section{Problem 2}
 
-\subsection*{2.1} The plot of $d_{\mathrm{TV}(n), d_{\mathrm{KL}(n)}$ for the first 200 steps is shown below. \\
+\textbf{(1)} The plot of $d_{\mathrm{TV}}(n), d_{\mathrm{KL}}(n)$ for the first 200 steps is shown below. We see that both converge to 0 very quickly, with KL-Divergence converging to 0 slightly faster. \\
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.7\columnwidth]{norm_plot}
+\caption{TV-norm and KL-Divergence for $n = 200$ steps.}
+\end{center}
+\end{figure}
 
 \textbf{(2)} We calculate the contraction coefficient $K_0$ using
 \begin{align}
