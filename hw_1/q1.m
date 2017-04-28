@@ -21,14 +21,17 @@ K_2 = [  0    0    0  0.4   0.6;
        0.3    0   0.7   0     0];
 
 %% part 2. print out 5 eigen-values and 5 left eigen-vectors
-[V0, D0] = eig(K_0);
-[V1, D1] = eig(K_1);
-[V2, D2] = eig(K_2);
+[V0, D0] = eig(K_0.');
+[V1, D1] = eig(K_1.');
+[V2, D2] = eig(K_2.');
+
+left_evec = V0(:,1);
+norm_left = abs(left_evec / norm(left_evec, 1))'; % left eigen-vector
 
 
 %% part 3. how many, what are the invariant probabilities?
-%axis([-1 1 -1 1])
-%scatterplot(lambda_0)
+%  axis([-1 1 -1 1])
+%  scatterplot(lambda_0)
 
 
 %% part 4. plot eigenvalues as dots on 2-D plane (inside unit circle)
@@ -38,10 +41,12 @@ K_02 = K_0^200;
 [~, D01] = eig(K_01);
 [~, D02] = eig(K_02);
 
+
+
 %% plot D0, lambda_01, lambda_02 on 2-D plane
-lambda_0  = diag(D0);
-lambda_01 = diag(D01);
-lambda_02 = diag(D02);
+lambda_0  = sort(diag(D0),  'descend');
+lambda_01 = sort(diag(D01), 'descend');
+lambda_02 = sort(diag(D02), 'descend');
 
 
 re = [real(lambda_0); real(lambda_01); real(lambda_02)];
