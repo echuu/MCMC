@@ -36,21 +36,6 @@ if (1 == 0) {
   }
 }
 
-# other option
-iter = c()
-for (n in (1:38)) {
-  rate = 0.2
-  print(floor(10^(rate * n)))
-  iter = c(iter, floor(10^(rate * n)))
-}
-
-iter = c()
-for (n in (1:90)) {
-  rate = 0.09
-  print(floor(10^(rate * n)))
-  iter = c(iter, floor(10^(rate * n)))
-}
-
 
 saw = data.frame(iter, d1 = design_1$V1, d2 = design_2$V1,
                        d3 = design_3$V1)
@@ -83,7 +68,7 @@ processPaths = function(p_rows, p_cols) {
   
   ## generate the longest SAW
   ggplot(grid_pts, aes(x = row, y = col)) + 
-    geom_path(size = 2, colour = "blue") +
+    geom_path(size = 2, colour = "red") +
     labs(x = "", y = "", 
          title = paste("SAW (length = ", path_length, ")", sep = "")) +
     scale_x_continuous(breaks = c(0:10)) +
