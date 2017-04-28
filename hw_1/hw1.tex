@@ -258,17 +258,11 @@ K_0^{200} =
 
 \hfill $\qed$
 
+\pagebreak
 
 \section{Problem 2}
 
-\textbf{(1)} The plot of $d_{\mathrm{TV}}(n), d_{\mathrm{KL}}(n)$ for the first 200 steps is shown below. We see that both converge to 0 very quickly, with KL-Divergence converging to 0 slightly faster. \\
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width = 0.7\columnwidth]{norm_plot}
-\caption{TV-norm and KL-Divergence for $n = 200$ steps.}
-\end{center}
-\end{figure}
+\textbf{(1)} The plot of $d_{\mathrm{TV}}(n), d_{\mathrm{KL}}(n)$ for the first 200 steps is shown below.
 
 \textbf{(2)} We calculate the contraction coefficient $K_0$ using
 \begin{align}
@@ -287,13 +281,26 @@ As $\vertii{\nu_1 - \nu_2}_{\mathrm{TV}} \leq 1$, if $C(K) < 1$, then the conver
 	\leq C^n(K_0) \vertii{\nu_1 - \nu_2}_{\mathrm{TV}} \leq C^n(K_0), \quad \forall \nu_1, \nu_2
 \end{align}
 
-The plot for the bound $C^n(K_0)$ over $n = 1, \ldots, 100$ is shown below. \\
+The plot for the bound $C^n(K_0)$ over $n = 1, \ldots, 100$ is shown below.
 
 \textbf{(3)} The Diaconis-Hanlon bound is given by
 \begin{align}
 	& B(n) = \vertii{\pi - \nu K_0^n}_{\mathrm{TV}} \leq \sqrt{\frac{1 -\pi(x_0)}{4 \pi (x_0)}} \lambda_{\mathrm{slem}}^n
 \end{align}
 where $x_0 = 1$ is the initial state and $\pi(x_0)$ is the target probability at $x_0 = 1$ and $\lambda_{\mathrm{slem}}^n$ is the second largest eigen-value modulus. The plot of the real convergence $d_{\mathrm{TV}}$ in comparison with $A(n), B(n)$ is given below. \\
+
+
+We see that both converge to 0 very quickly, with KL-Divergence converging to 0 slightly faster. Bound $A(n)$, calculated using the contraction coefficient is shown in the turquoise curve below, while Bound $B(n)$, the Diaconis-Hanlon bound, is shown in the purple curve below. We can see that $B(n)$ provides a tighter bound on the convergence than does $A(n)$. \\
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width = 0.9\columnwidth]{q2_plot}
+\caption{TV-norm and KL-Divergence for $n = 200$ steps. Bound A and Bound B refer to $A(n), B(n)$, respectively, both as calculated above.}
+\end{center}
+\end{figure}
+
+
+
 
 
 \pagebreak

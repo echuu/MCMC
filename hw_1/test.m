@@ -8,7 +8,6 @@ K = [0.3 0.6 0.1 0.0 0.0;
 	 0.0 0.0 0.4 0.1 0.5;
 	 0.4 0.1 0.0 0.4 0.1];
 
-
 [v, d] = eig(K');
 
 
@@ -25,5 +24,12 @@ im = [imag(lbda)];
 
 e_values = [re im]
 csvwrite('eigenvalues.csv', e_values);
+
+
+for r = 1:4
+	for rr = (r+1):4
+		disp([num2str(r), ' ', num2str(rr)]);
+	end
+end
 
 
