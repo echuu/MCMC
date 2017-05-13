@@ -15,52 +15,38 @@ lat1 = matrix(1, 4, 4)
 # MC2 starts with all sites = 0
 lat2 = matrix(0, 4, 4)
 
-# energy function
-E = function(x) {
+# calculate energy at position (r, c) on the lattice
+# grid: (n x n) lattice
+getNeighborSpins = function(r, c, grid, n) {
+    corner = FALSE;
+    energy = 0;
     
-}
-
-
-# Some code to illustrate Gibbs sampling of a simple
-# Ising model (theta=1).  To demo in class 2/23/99
-
-nscan = 1000 
-kk    = 4  # number of rows/columns in region
-x     = matrix(-1, kk, kk) # a starting configuration
-# Goal, to approximate P[ X_(1,1) = X_(1,2) ]
-
-# The sampler
-
-same <- rep(NA, nscan)  # indicator that first pixels equal
-sumx <- rep(NA, nscan)  # sum(x)
-for(iscan in 1:nscan)
-{
-    for(i in 1:kk)
-    {
-        for(j in 1:kk)
-        {
-            # figure out the relevant information from neighbors
-            # (a slow implementation)
-            foo <- 0
-            if(i > 1) { 
-                foo = foo + x[i-1,j] 
-            }
-            if(i < kk) { 
-                foo = foo + x[i+1,j] 
-            }
-            if(j > 1) { 
-                foo = foo + x[i,j-1] 
-            }
-            if(j < kk) { 
-                foo = foo + x[i,j+1] 
-            }
-            
-            # Update by the simple full conditional
-            p <- exp(foo)/(exp(foo) + exp(-foo))
-            x[i,j] <- ifelse(runif(1) <= p, +1, -1)
-        }
+    # udpate row
+    if (r == 1) {           # top row
+       UP   = grid[n, c];
+       DOWN = grid[r + 1, c]; 
+    } else if (r == n) {    # bottom row
+        UP = grid[r - 1, c];
+        DOWN = grid[1, c];
+    } else {
+        UP   = grid[r - 1, c];
+        DOWN = grid[r + c, c]
     }
-    same[iscan] = ifelse(x[1,1] == x[1,2], 1, 0 )
-    sumx[iscan] = sum(x)
-    print(iscan)
+    
+    # update column
+    if (col == 1) {           # left col
+        LEFT = grid[r, n];
+        RIGHT = grid[r, c + 1];
+    } else if (col == n) {    # right col
+        LEFT = grid[r, c - 1];
+        RIGHT = grid[r, 1];
+    } else {
+        LEFT = grid[r, c - 1];
+        RIGHT = grid[r, c + 1];
+    }
+    
+    energy = UP + DOWN + LEFT + RIGHT;
+    return(energy)
 }
+
+
