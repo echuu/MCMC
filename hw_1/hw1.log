@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.1.5)  28 APR 2017 13:10
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.1.5)  28 APR 2017 22:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -654,20 +654,20 @@ LaTeX Warning: Unused global option(s):
 (./hw1.aux)
 \openout1 = `hw1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 191.
-LaTeX Font Info:    ... okay on input line 191.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 191.
-LaTeX Font Info:    ... okay on input line 191.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 191.
-LaTeX Font Info:    ... okay on input line 191.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 191.
-LaTeX Font Info:    ... okay on input line 191.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 191.
-LaTeX Font Info:    ... okay on input line 191.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 191.
-LaTeX Font Info:    ... okay on input line 191.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 191.
-LaTeX Font Info:    ... okay on input line 191.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 194.
+LaTeX Font Info:    ... okay on input line 194.
  ABD: EveryShipout initializing macros
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -698,7 +698,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \AtBeginShipoutBox=\box63
-Package hyperref Info: Link coloring OFF on input line 191.
+Package hyperref Info: Link coloring OFF on input line 194.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -708,9 +708,9 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count159
 )
-LaTeX Info: Redefining \ref on input line 191.
-LaTeX Info: Redefining \pageref on input line 191.
-LaTeX Info: Redefining \nameref on input line 191.
+LaTeX Info: Redefining \ref on input line 194.
+LaTeX Info: Redefining \pageref on input line 194.
+LaTeX Info: Redefining \nameref on input line 194.
 
 (./hw1.out) (./hw1.out)
 \@outlinefile=\write4
@@ -724,7 +724,7 @@ File: lstlang1.sty 2013/08/26 1.5b listings language file
 ! Undefined control sequence.
 <argument> \hmwkClassInstructor \ \hmwkClassTime 
                                                  
-l.214 
+l.217 
       
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -732,11 +732,11 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 214.
+LaTeX Font Info:    Try loading font information for U+msa on input line 217.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 214.
+LaTeX Font Info:    Try loading font information for U+msb on input line 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -748,34 +748,29 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.217 
+l.220 
       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 221--223
+Underfull \hbox (badness 10000) in paragraph at lines 224--226
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--225
+Underfull \hbox (badness 10000) in paragraph at lines 227--228
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 226--227
+Underfull \hbox (badness 10000) in paragraph at lines 229--230
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--229
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 230--231
+Underfull \hbox (badness 10000) in paragraph at lines 231--232
 
  []
 
@@ -784,40 +779,39 @@ Underfull \hbox (badness 10000) in paragraph at lines 233--234
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
-
- []
-
-<eigen_values.png, id=19, 1421.31pt x 412.54124pt>
-File: eigen_values.png Graphic file (type png)
- <use eigen_values.png>
-Package pdftex.def Info: eigen_values.png used on input line 240.
-(pdftex.def)             Requested size: 469.75499pt x 136.34676pt.
-
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2 <./eigen_values.png (PN
-G copy)>]
-Underfull \hbox (badness 10000) in paragraph at lines 289--291
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Underfull \hbox (badness 10000) in paragraph at lines 317--318
+
+ []
+
+<eigen_values.png, id=39, 1421.31pt x 412.54124pt>
+File: eigen_values.png Graphic file (type png)
+ <use eigen_values.png>
+Package pdftex.def Info: eigen_values.png used on input line 321.
+(pdftex.def)             Requested size: 469.75499pt x 136.34676pt.
+
+[2 <./eigen_values.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 366--368
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 293--294
+Underfull \hbox (badness 10000) in paragraph at lines 370--371
 
  []
 
-<q2_plot.png, id=42, 856.70062pt x 521.69907pt>
+<q2_plot.png, id=46, 856.70062pt x 521.69907pt>
 File: q2_plot.png Graphic file (type png)
  <use q2_plot.png>
-Package pdftex.def Info: q2_plot.png used on input line 297.
+Package pdftex.def Info: q2_plot.png used on input line 374.
 (pdftex.def)             Requested size: 422.77661pt x 257.45772pt.
  [3 <./q2_plot.png (PNG copy)>]
 ! Extra }, or forgotten \right.
 <template> }
             $}\ifmeasuring@ \savefieldlength@ \fi \set@field \hfil \endtempl...
-l.313 \end{align}
+l.394 \end{align}
                  
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -828,7 +822,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing \right. inserted.
 <inserted text> 
                 \right .
-l.313 \end{align}
+l.394 \end{align}
                  
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -839,7 +833,7 @@ my insertion and my current dilemma will both disappear.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.313 \end{align}
+l.394 \end{align}
                  
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -850,7 +844,7 @@ my insertion and my current dilemma will both disappear.
 ! Extra }, or forgotten \right.
 <template> }
             $}\ifmeasuring@ \savefieldlength@ \fi \set@field \hfil \endtempl...
-l.313 \end{align}
+l.394 \end{align}
                  
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -861,7 +855,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing \right. inserted.
 <inserted text> 
                 \right .
-l.313 \end{align}
+l.394 \end{align}
                  
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -872,7 +866,7 @@ my insertion and my current dilemma will both disappear.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.313 \end{align}
+l.394 \end{align}
                  
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -880,29 +874,25 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 316--317
-
- []
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 318.
 [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 318.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 468.
+ [5]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 468.
  (./hw1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 318.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 318.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 468.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 468.
 Package rerunfilecheck Info: File `hw1.out' has not changed.
-(rerunfilecheck)             Checksum: 27946C9C9F915D08D63F8E6209AB272B;135.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 318.
+(rerunfilecheck)             Checksum: 43B5C1C18FD7E756618D8FEAC01FF9E3;180.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 468.
  ) 
 Here is how much of TeX's memory you used:
- 17662 strings out of 493304
- 312581 string characters out of 6139872
- 429887 words of memory out of 5000000
- 20780 multiletter control sequences out of 15000+600000
- 12510 words of font info for 48 fonts, out of 8000000 for 9000
+ 17674 strings out of 493304
+ 312689 string characters out of 6139872
+ 434913 words of memory out of 5000000
+ 20785 multiletter control sequences out of 15000+600000
+ 13129 words of font info for 50 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 56i,14n,55p,602b,327s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,15n,55p,602b,337s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
@@ -913,11 +903,12 @@ t/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts
 public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
 msfonts/cm/cmsl10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mti12.pfb>
-Output written on hw1.pdf (4 pages, 189735 bytes).
+msy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.p
+fb>
+Output written on hw1.pdf (5 pages, 210030 bytes).
 PDF statistics:
- 98 PDF objects out of 1000 (max. 8388607)
- 78 compressed objects within 1 object stream
- 16 named destinations out of 1000 (max. 500000)
- 47 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 114 PDF objects out of 1000 (max. 8388607)
+ 92 compressed objects within 1 object stream
+ 21 named destinations out of 1000 (max. 500000)
+ 55 words of extra memory for PDF output out of 10000 (max. 10000000)
 

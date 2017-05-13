@@ -166,6 +166,9 @@
 \newcommand{\xbar}{\bar{X}}
 \newcommand{\ybar}{\bar{Y}}
 \newcommand{\samplechi}{\frac{(n-1)s^2}{\sigma^2}}
+\newcommand{\ypi}{y: \pi(y) > 0}
+\newcommand{\xpi}{x: \pi(x) > 0}
+
 
 \newcommand{\vertii}[1]{{\left\vert\kern-0.25ex\left\vert #1 
     \right\vert\kern-0.25ex\right\vert}}
@@ -229,8 +232,86 @@ For $K_2$, we draw the transition graph diagram and see that all states can be r
 
 \textbf{(2)} The eigenvalues and left eigen-vectors for each matrix are given below. \\
 
+$K_0$ left-eigenvectors (stored as column vectors):
+\begin{align*}
+	\begin{bmatrix}
+		-0.167	&-0.07-0.118i   &-0.07+0.118i &	  0.402	  &0.503 \\
+		-0.517	& 0.148+0.379i	&0.148-0.379i &	  0.491	 &-0.159 \\
+		-0.632	& 0.3-0.241i	    &0.3+0.241i	  & 0.139	 &-0.638 \\
+		-0.492	&-0.735	        &-0.735	      & -0.667 	 &-0.221 \\
+		-0.251	& 0.357-0.019i	&0.357+0.019i &	 -0.365	 & 0.516
+	\end{bmatrix}, \quad \Lambda_1 = 
+	\begin{bmatrix}
+		1	\\
+		-0.544+0.182i	\\
+		-0.544-0.182i	\\
+		0.279	\\
+		-0.19
+	\end{bmatrix}
+\end{align*}
 
-\textbf{(3)} For each matrix, there are (insert number here) invariant probabilities. \\
+$K_1$ left-eigenvectors (stored as column vectors):
+\begin{align*}
+	\begin{bmatrix}
+		0		&	-0.284	&	0		&	0.78		&	-0.697 \\
+		0		&	-0.42	&	0		&	-0.528	&	0\\
+		0		&	-0.386	&	0		&	-0.201	&	0.697\\
+		-0.707	&	0.541	&	-0.707	&	-0.213	&	0.116 \\
+		-0.707	&	0.549	&	0.707	&	0.162	&	-0.116
+	\end{bmatrix}, \quad \Lambda_2 = 
+	\begin{bmatrix}
+		1	\\
+		0.939	\\
+		-0.4	\\
+		-0.139	\\
+		0.2	
+	\end{bmatrix}
+\end{align*}
+
+
+$K_2$ left-eigenvectors (stored as column vectors):
+\begin{align*}
+	\begin{bmatrix}
+		-0.149	&	0.149	&	0.772	&	-0.242	&	-0.242 \\
+		-0.45	&	0.45		&	-0.617	&	0.645	&	0.645 \\
+		-0.46	&	0.46		&	-0.154	&	-0.403	&	-0.403 \\
+		0.563	&	0.563	&	0		&	0.426i	&	0.426i \\
+		0.497	&	0.497	&	0		&	0.426i	&	0.426i
+	\end{bmatrix}, \quad \Lambda_2 = 
+	\begin{bmatrix}
+		-1	\\
+		1	\\
+		0	\\
+		0.529i	\\
+		0.529i	
+	\end{bmatrix}
+\end{align*}
+
+
+\textbf{(3)} For $K_0$, there is one invariant probability:
+\begin{align*}
+	\begin{bmatrix}
+		0.08094	&	0.2512		&	0.3071	&	0.2389	&	0.1219
+	\end{bmatrix}
+\end{align*}
+with eigenvalue 1.
+
+
+For $K_1$, there is one invariant probability:
+\begin{align*}
+	\begin{bmatrix}
+		0	&	0  &	  0	&	0.5000	&	0.5000
+	\end{bmatrix}
+\end{align*}
+with eigenvalue 1.
+
+For $K_2$, there is one invariant probability:
+\begin{align*}
+	\begin{bmatrix}
+		0.0703  &	0.2125	& 0.2172 	& -0.2656	-0.2344
+	\end{bmatrix}
+\end{align*}
+with eigenvalue 1.
 
 
 \textbf{(4)} The eigen-values for $K_0, K_0^{50}, K_{0}^{200}$ are plotted below. \\
@@ -256,9 +337,6 @@ K_0^{200} =
 	\end{bmatrix}
 \end{align*}
 
-\hfill $\qed$
-
-\pagebreak
 
 \section{Problem 2}
 
@@ -275,7 +353,6 @@ For two initial probbailities $\nu_1, \nu_2$,
 \end{align}
 
 As $\vertii{\nu_1 - \nu_2}_{\mathrm{TV}} \leq 1$, if $C(K) < 1$, then the convergence rate can be upper bounded by
-
 \begin{align}
 	& A(n) = \vertii{\nu_1 \cdot K_0^n - \nu_{2} \cdot K_0^n}_{\mathrm{TV}} 
 	\leq C^n(K_0) \vertii{\nu_1 - \nu_2}_{\mathrm{TV}} \leq C^n(K_0), \quad \forall \nu_1, \nu_2
@@ -301,11 +378,15 @@ We see that both converge to 0 very quickly, with KL-Divergence converging to 0 
 
 
 
-
-
 \pagebreak
 
+
 \section{Problem 3}
+In a finite state $\Omega$, suppose at step $t$, a Markov chain MC has state $X$ following probability $\nu$. By applying the Markov kernel $P$ once, its state in $t+1$ is $Y$ which follows probability $\mu = \nu \cdot P$. $P(x,y)$ is the transition (conditional) probability from state $x$ to $y$. Suppose we denote by $Q(x,y)$ the reverse transition probability of $P$ at time $t$, 
+\begin{align}
+	& Q(y,x) = \frac{P(x,y) \nu(x)}{\mu(y)}
+\end{align}
+
 Show that the Kullback-Leibler divergence decreases monotonically,
 \begin{align}
 	& KL \left( \pi || \nu \right) - KL \left( \pi || \mu \right) = \E\left[
@@ -314,5 +395,79 @@ Show that the Kullback-Leibler divergence decreases monotonically,
 
 
 \textbf{Solution} \\
+By definition of KL-divergence, we have
+\begin{align*}
+	& KL \left( \pi || \nu \right) = \sum_{\ypi} \pi(y) \cdot \log \frac{\pi(y)}{\mu(y)} 
+	= \sum_{\ypi} \pi(y) \log \frac{\pi}{\sum_{x} P(x,y) \nu(x)}
+\end{align*} 
+
+Note that if $\mu(y) > 0$ when $\pi(y) > 0$, then by definition the KL divergence is infinite. Using this fact, we know that if
+$\sum_{x} P(x,y) \nu(x) = 0$ when $\pi(x) > 0$, this implies that $KL(\pi || \nu)$ is infinite and the inequality in (7) holds. If the sum is nonzero, then we have
+
+\begin{align*}
+	\sum_{\ypi} \pi(y) \log \frac{\pi}{\sum_{x} P(x,y) \nu(x)}
+	&\leq - \sum_{\ypi} \pi(y) \log \left[\sum_{\xpi} \frac{\nu(x)}{\pi(y)} \right]\\
+	&\leq - \sum_{\ypi} \pi(y) \log \left[ \sum_{\xpi} Q(y,x) \cdot \frac{\nu(x)}{\pi(x)} \right] \\
+	&\leq - \sum_{\ypi} \pi(y) \sum_{\xpi} Q(y,x) \cdot \log \frac{\nu(x)}{\pi(x)} \qquad \textnormal{(Jensen's Inequality)} \\
+	&= \sum_{x} \pi(x) \log \frac{\pi(x)}{\nu(x)} \\
+	&= KL \left( \pi || \nu \right)
+\end{align*}
+where the second line follows from applying the equality in (6). Thus we conclude that
+\begin{align*}
+	KL \left( \pi || \mu \right) & \leq KL \left( \pi || \nu \right) \\
+	KL \left( \pi || \nu \right) &- KL \left( \pi || \mu \right) \geq 0
+\end{align*}
+and the inequality in (7) holds. \hfill $\qed$
+
+\pagebreak
+
+
+\section{Problem 4}
+A Markov chain returning time $\tau_{\mathrm{ret}(i)}$ is the minimum steps that a Markov chain needs to return to state $i$ after leaving state $i$. Suppose we consider a random walk in the countable set of non-negative numbers $\Omega = \{ 1, 2, \ldots,  \}$. At a step, the Markov chain state $x_t = n$, it has probability $\alpha$ to go up ($x_{t+1} = n + 1$) and probability $1 - \alpha$ to return to $x_{t+1} = 0$. Calculate the probability for returning to state 0 in finite step
+\begin{align}
+	& \pr \left( \tau_{\mathrm{ret}}(0) < \infty \right) = \sum_{\tau(0) = 1}^{\infty} \pr \left( \tau(0) \right)
+\end{align}
+
+Calculate the expected return time
+\begin{align}
+	& \E \left[ \tau_{\mathrm{ret}}(0) \right]
+\end{align}
+
+
+\textbf{Solution} \\
+We consider the transition matrix,
+\begin{align*}
+K = 
+	\begin{bmatrix}
+		1 - \alpha  & \alpha & 0 & 0      & \cdots \\		
+		1 - \alpha  & 0 & \alpha & 0      & \cdots \\	
+		1 - \alpha  & 0 & 0      & \alpha & \cdots \\	
+		1 - \alpha  & 0 & 0      & 0      & \cdots \\	
+		1 - \alpha  & 0 & 0      & 0      & \cdots \\
+		\vdots  & \vdots & \vdots  & \vdots  & \vdots 
+	\end{bmatrix}
+\end{align*}
+
+Each step follows a bernoulli distribution with probability of failure $\alpha$ and probability of success $1 - \alpha$. Then the probability of returning to state 0 in finite step is equivalent to calculating the probability of success in finite step. Using the summation in (8) above, we can calculate 
+\begin{align*}
+	\pr \left( \tau_{\mathrm{ret}}(0) < \infty \right) &= (1 - \alpha) + \alpha(1 - \alpha) + \alpha^2(1 - \alpha) + \cdots + \alpha^n(1 - \alpha) + \cdots \\
+	&= (1 - \alpha) \left[ 1 + \alpha + \alpha^2 + \alpha^3 + \cdots \right] \\
+	&= (1 - \alpha) \cdot \frac{1}{1-\alpha}
+\end{align*} 
+if $\alpha < 1$ (note we disregard absolute value since $\alpha$ is a probability). Thus, the probability of returning to state 0 in finite time is 1 if $\alpha < 1$, but 0 for $\alpha = 1$. The expected return time is then just the expectation of a geometric random variable, i.e., the expected number of times it takes for the first success, so
+
+\[ \E \left[ \tau_{\mathrm{ret}}(0) \right]
+\begin{cases}   
+	\frac{1}{1 - \alpha}, \quad \textnormal{if } 0 \leq \alpha < 1 \\
+	\infty, \qquad \textnormal{if } \alpha = 1
+\end{cases}
+\]
+
+We see that the expectation is finite only for $\alpha < 1$, and infinite for $\alpha = 1$. \hfill $\qed$
 
 \end{document}
+
+
+
+
+
