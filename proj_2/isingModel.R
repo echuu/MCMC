@@ -4,7 +4,41 @@ library(ggplot2)
 
 # STATS 202C: PROJECT 2
 # sampling the Ising model with coupled Markov Chains
-
+multiplot <- function(plots, plotlist=NULL, file, cols=1, layout=NULL) {
+    library(grid)
+    
+    # Make a list from the ... arguments and plotlist
+    #plots <- c(list(...), plotlist)
+    
+    numPlots = length(plots)
+    
+    # If layout is NULL, then use 'cols' to determine layout
+    if (is.null(layout)) {
+        # Make the panel
+        # ncol: Number of columns of plots
+        # nrow: Number of rows needed, calculated from # of cols
+        layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                         ncol = cols, nrow = ceiling(numPlots/cols))
+    }
+    
+    if (numPlots==1) {
+        print(plots[[1]])
+        
+    } else {
+        # Set up the page
+        grid.newpage()
+        pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+        
+        # Make each plot, in the correct location
+        for (i in 1:numPlots) {
+            # Get the i,j matrix positions of the regions that contain this subplot
+            matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+            
+            print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                            layout.pos.col = matchidx$col))
+        }
+    }
+}
 # calculate energy at position (r, c) on the lattice
 # mc: (n x n) lattice
 getNeighborSpins = function(r, c, mc) {
@@ -111,21 +145,24 @@ for (b in 1:length(beta)) {
     mm_matrix = gibbs(beta, b, n, mm1, mm2, mc1, mc2);
 }
 
-
-results = data.frame(iter = rep(1:120, 2), mm = mm_matrix[,1],
-                     mc = c(rep(1, 120), rep(2, 120)))
-ggplot(results, aes(x = iter, y = mm, colour = as.factor(mc))) + 
-    geom_line()
+View(mm_matrix)
 
 
-#nb1 = getNeighborSpins(r, c, mc1);
-#nb2 = getNeighborSpins(r, c, mc2);
+p = list()
+for (b in 1:length(beta)) {
+    results = data.frame(iter = rep(1:120, 2), mm = mm_matrix[,b],
+                         mc = c(rep(1, 120), rep(2, 120)))
+    title_b = paste("Coupled Markov Chains (Beta =", beta[b], ")");
+    p_b = ggplot(results, aes(x = iter, y = mm, colour = as.factor(mc))) + 
+        geom_line() + labs(x = "iterations", y = "Sum of Image", 
+                           title = title_b, colour = c("Markov\nChain")) 
+    p[[b]] = p_b;
+}
 
-#p1 = exp(beta[b] * sum(nb1 == 1));
-#p1 = p1 / (p1 + exp(beta[b] * sum(nb1 == 0)));
+multiplot(p, cols = 4)
 
-#p2 = exp(beta[b] * sum(nb2 == 1));
-#p2 = p2 / (p2 + exp(beta[b] * sum(nb2 == 0)));
+
+
 
 
 
