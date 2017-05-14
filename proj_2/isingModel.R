@@ -95,7 +95,11 @@ update = function(p1, p2) {
 }
 
 gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
-    for (i in sweep_sequence) {
+    i = 1;
+    tau = -1;
+    converge = FALSE;
+    countdown = 20;
+    while (countdown > 0) {
         # each sweep traverses the entire lattice for each MC
         for (j in 0:num_points) {
             # coordinate of the lattice to find energy
@@ -111,17 +115,34 @@ gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
         }
         
         # update magnetic moments for i-th iteration
-        mm1[i,] = sum(mc1);
-        mm2[i,] = sum(mc2);
+        #mm1[i,] = sum(mc1);
+        #mm2[i,] = sum(mc2);
+        mm1 = c(mm1, sum(mc1));
+        mm2 = c(mm2, sum(mc2));
+        
+        if ((converge == FALSE) && (mm1[i] == mm2[i])) {
+            tau = i; ## coalesce time reached
+            converge = TRUE;
+        }
+        if (converge == TRUE) {
+            countdown = countdown - 1;
+        }
+        i = i + 1;
+        if (i > 40000) {
+            break;
+        }
     }
     
-    mm_matrix[, b] = rbind(mm1, mm2);
-    print(paste("finished calculating for beta =", beta[b]));
-    return(mm_matrix);
+    # mm_matrix[, b] = rbind(mm1, mm2);
+    markov_chains = c(mm1, mm2);
+    print(paste("beta =", beta[b], "convergence:", tau));
+    return(list(markov_chains, tau));
 }
 
 # beta = 1 / Temperature
 beta = c(0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.9, 1.0); # 8 betas
+beta = c(0.5, 0.65, 0.75, 0.77, 0.79);
+beta = c(0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.86, 0.88, 0.90, 1.0)
 
 # dimension of the lattice
 n       = 64;
@@ -133,34 +154,46 @@ num_points     = n * n - 1
 ### RUN THIS CHUNK EVERY TIME ######################
 # MC1 starts with all sites = 1
 mc1 = matrix(1, n, n)
-mm1 = matrix(0, nSweeps, 1);
+# mm1 = matrix(0, nSweeps, 1);
+mm1 = c();
 
 # MC2 starts with all sites = 0
 mc2 = matrix(0, n, n)
-mm2 = matrix(0, nSweeps, 1);
-mm_matrix = matrix(0, nSweeps*2, length(beta))
+# mm2 = matrix(0, nSweeps, 1);
+mm2 = c();
+# mm_matrix = matrix(0, nSweeps*2, length(beta))
+
+mc_results = list();
+coalesce   = rep(0, length(beta))
 #####################################################
 
 for (b in 1:length(beta)) {
-    mm_matrix = gibbs(beta, b, n, mm1, mm2, mc1, mc2);
+    result = gibbs(beta, b, n, mm1, mm2, mc1, mc2);
+    mc_results[[b]] = result[[1]];
+    coalesce[b]   = result[[2]];
 }
-
-View(mm_matrix)
-
 
 p = list()
 for (b in 1:length(beta)) {
-    results = data.frame(iter = rep(1:120, 2), mm = mm_matrix[,b],
-                         mc = c(rep(1, 120), rep(2, 120)))
-    title_b = paste("Coupled Markov Chains (Beta =", beta[b], ")");
+    moments        = mc_results[[b]];
+    chain_length = length(moments) / 2;
+    
+    results = data.frame(iter = rep(1:chain_length, 2), 
+                         mm = moments,
+                         mc = c(rep(1, chain_length), rep(2, chain_length)));
+    
+    title_b = paste("Beta =", beta[b], ",", "time =", coalesce[b]);
     p_b = ggplot(results, aes(x = iter, y = mm, colour = as.factor(mc))) + 
-        geom_line() + labs(x = "iterations", y = "Sum of Image", 
-                           title = title_b, colour = c("Markov\nChain")) 
+        geom_line() + 
+        labs(x = "iterations", y = "Sum of Image", title = title_b, colour = "MC") + 
+        theme_bw()
+
     p[[b]] = p_b;
 }
 
-multiplot(p, cols = 4)
 
+multiplot(p, cols = 3)
+multiplot(p[5:8], cols = 2)
 
 
 
