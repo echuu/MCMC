@@ -128,8 +128,11 @@ gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
             countdown = countdown - 1;
         }
         i = i + 1;
-        if (i > 40000) {
+        if (i > 100000) {
             break;
+        }
+        if (i %% 1000 == 0) {
+            print(paste('iter', i));
         }
     }
     
@@ -143,6 +146,7 @@ gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
 beta = c(0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.9, 1.0); # 8 betas
 beta = c(0.5, 0.65, 0.75, 0.77, 0.79);
 beta = c(0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.86, 0.88, 0.90, 1.0)
+beta = c(0.89, 0.90, 1.0)
 
 # dimension of the lattice
 n       = 64;
@@ -164,16 +168,26 @@ mm2 = c();
 # mm_matrix = matrix(0, nSweeps*2, length(beta))
 
 mc_results = list();
+mc_results_long = list();
 coalesce   = rep(0, length(beta))
+coalesce1   = rep(0, length(beta))
 #####################################################
 
 for (b in 1:length(beta)) {
     result = gibbs(beta, b, n, mm1, mm2, mc1, mc2);
-    mc_results[[b]] = result[[1]];
-    coalesce[b]   = result[[2]];
+    mc_results_long[[b]] = result[[1]];
+    coalesce1[b]   = result[[2]];
 }
 
 p = list()
+
+
+for (b in 1:1) {
+    fname = paste("beta_", beta[b], ".csv", sep = "");
+    write.csv(mc_results[[b]], fname);
+}
+
+
 for (b in 1:length(beta)) {
     moments        = mc_results[[b]];
     chain_length = length(moments) / 2;
