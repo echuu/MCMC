@@ -104,14 +104,18 @@ double condProb(int r, int c, double beta, int mc[N][N]) {
  * takes 2 MCs and iterates until convergence of the MCs
  * or until MAX_SWEEPS iterations
  */
-void gibbs(int g1[N][N], int g2[N][N], double beta) {
+int gibbs(int g1[N][N], int g2[N][N], double beta) {
 
 	bool    converge = false;
 	int     iter     = 0;
 	int     r, c, i;
 	double  p1, p2;
+	int     mm1, mm2;   // magnetic moment for each MC
+	int     tau;     	// coalesce time for MCs
 
-	double  runif = 0;
+	double  runif = 0;  // update using uniform random number inside loop
+
+	mm1 = mm1 = 0;
 
 	while (iter < MAX_SWEEPS) {
 
@@ -132,20 +136,27 @@ void gibbs(int g1[N][N], int g2[N][N], double beta) {
 				g2[r][c] = 1;
  			}
 
+			// update magnetic moment for this iteration (sum of grid)
+ 			mm1 += g1[r][c];
+ 			mm2 += g2[r][c];
 		}
 
-		// update magnetic moment for this iteration (sum of grid)
 
 		// check for convergence
-		if (converge == true) {
-			break;
+		if (mm1 == mm2) {
+			converge = true;
+			tau      = iter;
+			// implement option to run for longer after convergence
 		}
 
-		continue;
 	}
 
+	if (converge == true) {
+		return tau;
+	} else {
+		return -1;
+	}
 
-	return;
 } // end gibbs()
 
 
