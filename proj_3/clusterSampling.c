@@ -23,16 +23,6 @@ int    NUM_POINTS = 64 * 64 - 1;
 // end global declarations
 
 
-/** functions to implement:
-	
-	--getNeighborSpins: calculate energy at position (r,c)
-	updateState: based on random number in [0,1] and conditional probs
-	--condProb: calculate the probability, metropolis ratio
-	gibbs: main function that runs the gibbs sampler
-
-**/
-
-
 /** intialializeMC()
   * initialize the MC grid with 0s, 1s
 **/
@@ -124,19 +114,14 @@ int gibbs(int g1[N][N], int g2[N][N], double beta,
 	bool    converge = false;
 	int     iter     = 0;
 	int     r, c, i;
-	double  p1, p2;
+	double  p1, p2;		// store conditional probabilities
 	int     mm1, mm2;   // magnetic moment for each MC
 	int     tau;     	// coalesce time for MCs
 	double  runif = 0;  // update using uniform random number inside loop
 
 	int     scale = 2;  // multiplier for chain_length;
-	int*    tmp1;
+	int*    tmp1;		// for storing MCs when resizing chains
 	int*    tmp2;
-
-	//displayGrid(g1);
-	//printf("\n");
-	//displayGrid(g2);
-
 
 	while (iter < MAX_SWEEPS) {
 
@@ -193,16 +178,15 @@ int gibbs(int g1[N][N], int g2[N][N], double beta,
 			}
 		} // end of resize
 
-		// store magnetic moments for both of the MCs
-		// these are plotted over iteration in convergence analysis
+		
 		/*
 		if (iter % 1000 == 0) {
-			
+			printf("iter = %d, mm1 = %d, mm2 = %d\n", iter, mm1, mm2);	
 		}
 		*/
-		printf("iter = %d, mm1 = %d, mm2 = %d\n", iter, mm1, mm2);
-		//sleep(0.01);
 
+		// store magnetic moments for both of the MCs
+		// these are plotted over iteration in convergence analysis
 		chain1[iter] = mm1;
 		chain2[iter] = mm2;
 
@@ -261,21 +245,12 @@ int main() {
 	int* chain1 = malloc(chain_length * sizeof(int));
 	int* chain2 = malloc(chain_length * sizeof(int));
 
-	double beta = 0.7;
-
+	double          beta = 0.7;
 	int    convergence_t = 0;
-	printf("Running Gibbs Sampler\n");
-
-	clock_t begin = clock();
+	
 	srand(time(NULL));
 	convergence_t = gibbs(mc1, mc2, beta, chain1, chain2, chain_length);
-	clock_t end = clock();
-	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 	
 	printf("beta = %.2f, coalesce time = %d\n", beta, convergence_t);
-	printf("runtime: %.2f\n", time_spent);
+
 } // end main()
-
-
-
-
