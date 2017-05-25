@@ -8,6 +8,7 @@ double r2() {
 
 
 void simulateUnif() {
+  srand(time(NULL));
 
   int i;
   double r;
@@ -50,37 +51,11 @@ void simulateUnif() {
 int main (void)
 {
   int n = 10;
-  int* chain = malloc(n * sizeof(int)); 
-  int* tmp;
+  double* chain = malloc(n * sizeof(double)); 
+  double* tmp;
   int  i;
 
-  //if (chain == nullptr) {
-  //  print("failed to allocate memory\n");
-  //}
-
-  printf("length of chain = %d\n", (int) sizeof(*chain));
-
-  for (i = 0; i < 20; i++) {
-    if (i == n) {
-      printf("i = %d\n", i);
-      // reallocate memory
-      tmp = realloc(chain, 2 * n * sizeof(int));
-      if (!tmp) {
-        printf("Could not resize data\n");
-      } else {
-        chain = tmp;
-        n = 20;
-      }
-
-    }
-    chain[i] = 100;
-  }
-
-
-  for (i = 0; i < 25; i++) {
-    printf("i = %d -- %d\n", i, chain[i]);
-  }
-  
+  simulateUnif();
 
   return 0;
 }

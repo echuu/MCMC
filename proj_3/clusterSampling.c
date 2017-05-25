@@ -12,16 +12,14 @@ Author: Eric Chuu
 #include<stdlib.h>
 #include<math.h>
 #include<stdbool.h>
-//#include<gsl_rng.h>
-
-
-
+#include<time.h>
 
 
 // global delarations
 double BETA[8]    = {0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.9, 1.0};
-int    N          = 6; // dimension of the grid
-int    MAX_SWEEPS = 10000;
+int    N          = 64; // dimension of the grid
+int    MAX_SWEEPS = 100000;
+int    NUM_POINTS = 64 * 64 - 1;
 // end global declarations
 
 
@@ -35,9 +33,6 @@ int    MAX_SWEEPS = 10000;
 **/
 
 
-
-
-
 /** intialializeMC()
   * initialize the MC grid with 0s, 1s
 **/
@@ -49,9 +44,6 @@ void initializeMC(int MC[N][N], int x0) {
 		}
 	}
 } // end intializeMC()
-
-
-
 
 
 /** getNeighborSpins()
@@ -87,11 +79,9 @@ int getNeighborSpins(int r, int c, int grid[N][N]) {
 	}
 
 	energy = up + down + left + right;
+	//printf("Energy = %d\n", energy);
 	return energy;
 } // end getNeighborSpins()
-
-
-
 
 
 /**
@@ -104,7 +94,7 @@ double condProb(int r, int c, double beta, int mc[N][N]) {
 
 	int energy = getNeighborSpins(r, c, mc);
 	double p1  = exp(beta * energy); 
-	double Z   = p1 + exp(beta * (1 - energy));
+	double Z   = p1 + exp(beta * (4 - energy));
 	double p   = p1 / Z;
 
 	return p;
@@ -119,6 +109,8 @@ double unif() {
     return (double)rand() / (double)RAND_MAX ;
 } // end r2()
 
+
+void displayGrid(int grid[N][N]);
 
 /**
  * gibbs()
@@ -137,16 +129,20 @@ int gibbs(int g1[N][N], int g2[N][N], double beta,
 	int     tau;     	// coalesce time for MCs
 	double  runif = 0;  // update using uniform random number inside loop
 
-	int     scale = 2; // multiplier for chain_length;
+	int     scale = 2;  // multiplier for chain_length;
 	int*    tmp1;
 	int*    tmp2;
 
-	mm1 = mm1 = 0;
+	//displayGrid(g1);
+	//printf("\n");
+	//displayGrid(g2);
 
 
 	while (iter < MAX_SWEEPS) {
 
-		for (i = 0; i < N * N; i++) {
+		mm1 = mm2 = 0;
+		
+		for (i = 0; i < NUM_POINTS; i++) {
 
 			// runif ~ unif[0,1]
 			runif = unif();
@@ -159,47 +155,72 @@ int gibbs(int g1[N][N], int g2[N][N], double beta,
 			p1 = condProb(r, c, beta, g1);
 			p2 = condProb(r, c, beta, g2);
 
+			//printf("(%d, %d): p1 = %.3f, p2 = %.3f\n", r, c, p1, p2);
+
+			//sleep(1);
+
 			// update states using runif(0,1) and p1, p2
 			if (runif <= p1) {
 				g1[r][c] = 1;
+			} else {
+				g1[r][c] = 0;
 			}
 			if (runif <= p2) {
+				//printf("i = %d -- state change\n", i);
 				g2[r][c] = 1;
+ 			} else {
+ 				g2[r][c] = 0;
  			}
 
-			// update magnetic moment for this iteration (sum of grid)
- 			mm1 = g1[r][c];
- 			mm2 = g2[r][c];
+			// accumulate magnetic moment for each state
+ 			mm1 += g1[r][c];
+ 			mm2 += g2[r][c];
+		} // end for loop (traverse entire grid)
 
- 			
- 			if (iter == chain_length) {
- 				printf("resizing markov chains\n");
- 				tmp1 = realloc(chain1, scale * chain_length * sizeof(int));
- 				tmp2 = realloc(chain2, scale * chain_length * sizeof(int));
- 				if (!tmp1 || !tmp2) {
- 					printf("Failed to allocate memory.\n");
- 				} else {
- 					chain1 = tmp1;
- 					chain2 = tmp2;
- 					scale++;
- 				}
- 				
- 			}
- 			// store these in each of MCs
- 			chain1[iter] = mm1;
-			chain2[iter] = mm2;
+
+		// check for resize of chain storing magnetic moments
+		if (iter == chain_length) {
+			printf("resizing markov chains\n");
+			tmp1 = realloc(chain1, scale * chain_length * sizeof(int));
+			tmp2 = realloc(chain2, scale * chain_length * sizeof(int));
+			if (!tmp1 || !tmp2) {
+				printf("Failed to allocate memory.\n");
+			} else {
+				chain1 = tmp1;
+				chain2 = tmp2;
+				chain_length = scale * chain_length;
+				scale++;
+			}
+		} // end of resize
+
+		// store magnetic moments for both of the MCs
+		// these are plotted over iteration in convergence analysis
+		/*
+		if (iter % 1000 == 0) {
+			
 		}
+		*/
+		printf("iter = %d, mm1 = %d, mm2 = %d\n", iter, mm1, mm2);
+		//sleep(0.01);
+
+		chain1[iter] = mm1;
+		chain2[iter] = mm2;
 
 		// check for convergence
 		if (mm1 == mm2) {
 			converge = true;
+			printf("convergence time: %d\n", iter);
 			tau      = iter;
+			break;
 			// implement option to run for longer after convergence
-		}
+		} // end if
 
-	}
+		iter++;
+
+	} // end while
 
 	if (converge == true) {
+		printf("Markov Chain converged.\n");
 		return tau;
 	} else {
 		return -1;
@@ -218,7 +239,7 @@ void displayGrid(int grid[N][N]) {
 	int r, c = 0;
 	for (r = 0; r < N; r++) {
 		for (c = 0; c < N; c++) {
-			printf("(%d, %d): %d ", r, c, grid[r][c]);
+			printf("%d ", grid[r][c]);
 		}
 		printf("\n");
 	}
@@ -232,17 +253,27 @@ int main() {
 	int mc1[N][N];
 	int mc2[N][N];
 	int r, c = 0;
-	initializeMC(mc1, 0);
-	initializeMC(mc2, 1);
+	int chain_length = 1000;
 
-	int* chain1 = malloc(1000 * sizeof(int));
-	int* chain2 = malloc(1000 * sizeof(int));
+	initializeMC(mc1, 1);
+	initializeMC(mc2, 0);
+
+	int* chain1 = malloc(chain_length * sizeof(int));
+	int* chain2 = malloc(chain_length * sizeof(int));
 
 	double beta = 0.7;
 
-
+	int    convergence_t = 0;
 	printf("Running Gibbs Sampler\n");
 
+	clock_t begin = clock();
+	srand(time(NULL));
+	convergence_t = gibbs(mc1, mc2, beta, chain1, chain2, chain_length);
+	clock_t end = clock();
+	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	
+	printf("beta = %.2f, coalesce time = %d\n", beta, convergence_t);
+	printf("runtime: %.2f\n", time_spent);
 } // end main()
 
 
