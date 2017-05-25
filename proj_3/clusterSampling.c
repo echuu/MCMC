@@ -14,6 +14,10 @@ Author: Eric Chuu
 #include<stdbool.h>
 //#include<gsl_rng.h>
 
+
+
+
+
 // global delarations
 double BETA[8]    = {0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.9, 1.0};
 int    N          = 6; // dimension of the grid
@@ -31,6 +35,9 @@ int    MAX_SWEEPS = 10000;
 **/
 
 
+
+
+
 /** intialializeMC()
   * initialize the MC grid with 0s, 1s
 **/
@@ -42,6 +49,9 @@ void initializeMC(int MC[N][N], int x0) {
 		}
 	}
 } // end intializeMC()
+
+
+
 
 
 /** getNeighborSpins()
@@ -81,6 +91,9 @@ int getNeighborSpins(int r, int c, int grid[N][N]) {
 } // end getNeighborSpins()
 
 
+
+
+
 /**
  * condProb()
  * calculate the conditional probability of turning 1 in the next
@@ -99,12 +112,22 @@ double condProb(int r, int c, double beta, int mc[N][N]) {
 
 
 /**
+ * unif()
+ * generate uniformly distributed random number from [0,1]
+ */
+double unif() {
+    return (double)rand() / (double)RAND_MAX ;
+} // end r2()
+
+
+/**
  * gibbs()
  * gibbs sampler for ising model
  * takes 2 MCs and iterates until convergence of the MCs
  * or until MAX_SWEEPS iterations
  */
-int gibbs(int g1[N][N], int g2[N][N], double beta) {
+int gibbs(int g1[N][N], int g2[N][N], double beta,
+		  int* chain1, int* chain2, int chain_length) {
 
 	bool    converge = false;
 	int     iter     = 0;
@@ -112,14 +135,22 @@ int gibbs(int g1[N][N], int g2[N][N], double beta) {
 	double  p1, p2;
 	int     mm1, mm2;   // magnetic moment for each MC
 	int     tau;     	// coalesce time for MCs
-
 	double  runif = 0;  // update using uniform random number inside loop
 
+	int     scale = 2; // multiplier for chain_length;
+	int*    tmp1;
+	int*    tmp2;
+
 	mm1 = mm1 = 0;
+
 
 	while (iter < MAX_SWEEPS) {
 
 		for (i = 0; i < N * N; i++) {
+
+			// runif ~ unif[0,1]
+			runif = unif();
+
 			// get coordinates
 			r = i / N;
 			c = i % N;
@@ -137,10 +168,27 @@ int gibbs(int g1[N][N], int g2[N][N], double beta) {
  			}
 
 			// update magnetic moment for this iteration (sum of grid)
- 			mm1 += g1[r][c];
- 			mm2 += g2[r][c];
-		}
+ 			mm1 = g1[r][c];
+ 			mm2 = g2[r][c];
 
+ 			
+ 			if (iter == chain_length) {
+ 				printf("resizing markov chains\n");
+ 				tmp1 = realloc(chain1, scale * chain_length * sizeof(int));
+ 				tmp2 = realloc(chain2, scale * chain_length * sizeof(int));
+ 				if (!tmp1 || !tmp2) {
+ 					printf("Failed to allocate memory.\n");
+ 				} else {
+ 					chain1 = tmp1;
+ 					chain2 = tmp2;
+ 					scale++;
+ 				}
+ 				
+ 			}
+ 			// store these in each of MCs
+ 			chain1[iter] = mm1;
+			chain2[iter] = mm2;
+		}
 
 		// check for convergence
 		if (mm1 == mm2) {
@@ -160,6 +208,25 @@ int gibbs(int g1[N][N], int g2[N][N], double beta) {
 } // end gibbs()
 
 
+
+/**
+ * displayGrid()
+ * display the Markov Chain
+ */
+void displayGrid(int grid[N][N]) {
+
+	int r, c = 0;
+	for (r = 0; r < N; r++) {
+		for (c = 0; c < N; c++) {
+			printf("(%d, %d): %d ", r, c, grid[r][c]);
+		}
+		printf("\n");
+	}
+
+} // end displayGrid()
+
+
+
 int main() {
 
 	int mc1[N][N];
@@ -167,21 +234,14 @@ int main() {
 	int r, c = 0;
 	initializeMC(mc1, 0);
 	initializeMC(mc2, 1);
-	
-	/**
-	for (r = 0; r < N; r++) {
-		for (c = 0; c < N; c++) {
-			printf("(%d, %d): %d ", r, c, mc2[r][c]);
-		}
-		printf("\n");
-	}
-	**/
-	int result = 4 % 3;
-	printf("4 mod 3  = %d\n", result);
-	
+
+	int* chain1 = malloc(1000 * sizeof(int));
+	int* chain2 = malloc(1000 * sizeof(int));
+
+	double beta = 0.7;
 
 
-	
+	printf("Running Gibbs Sampler\n");
 
 } // end main()
 

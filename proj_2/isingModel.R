@@ -179,7 +179,6 @@ for (b in 1:length(beta)) {
     coalesce1[b]   = result[[2]];
 }
 
-p = list()
 
 
 for (b in 1:1) {
@@ -187,7 +186,8 @@ for (b in 1:1) {
     write.csv(mc_results[[b]], fname);
 }
 
-
+plots = list()
+coalesce[coalesce == -1] = "--";
 for (b in 1:length(beta)) {
     moments        = mc_results[[b]];
     chain_length = length(moments) / 2;
@@ -202,12 +202,24 @@ for (b in 1:length(beta)) {
         labs(x = "iterations", y = "Sum of Image", title = title_b, colour = "MC") + 
         theme_bw()
 
-    p[[b]] = p_b;
+    plots[[b]] = p_b;
 }
 
 
-multiplot(p, cols = 3)
-multiplot(p[5:8], cols = 2)
+multiplot(plots[1:4], cols = 2)
+multiplot(plots[5:8], cols = 2)
+multiplot(plots[9:10], cols = 1)
+
+
+beta_time = data.frame(b = beta[1:8], time = as.numeric(coalesce[1:8]))
+
+ggplot(beta_time, aes(x = b, y = time)) + geom_line() +
+    scale_x_continuous(breaks = seq(0.5, 1, 0.02)) + theme_bw() + 
+    labs(title = "Coalesce Time for varying values of Beta",
+         x = "beta", y = "time") + 
+    geom_vline(xintercept=0.84, linetype = "dotted", colour = "red")
+    
+
 
 
 
