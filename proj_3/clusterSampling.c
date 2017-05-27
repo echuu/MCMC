@@ -190,6 +190,8 @@ int gibbs(int g1[N][N], int g2[N][N], double beta,
 		}
 		*/
 
+		printf("iter = %d \t, mm1 = %d, mm2 = %d\n", iter, mm1, mm2);	
+
 		// store magnetic moments for both of the MCs
 		// these are plotted over iteration in convergence analysis
 		chain1[iter] = mm1;
