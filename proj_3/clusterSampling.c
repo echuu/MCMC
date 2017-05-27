@@ -72,7 +72,7 @@ int getNeighborSpins(int r, int c, int grid[N][N]) {
 
 	energy = up + down + left + right;
 	if (current_state == 0) {
-		energy = 4 - energy;
+		//energy = 4 - energy;
 	}
 	//printf("Energy = %d\n", energy);
 	return energy;
