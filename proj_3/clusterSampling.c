@@ -16,8 +16,8 @@ Author: Eric Chuu
 
 
 // global delarations
-double BETA[8]    = {0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.9, 1.0};
-int    N          = 64; // dimension of the grid
+double BETA[3]    = {0.65, 0.75, 0.85};
+int    N          = 64;                  // dimension of the grid
 int    MAX_SWEEPS = 100000;
 int    NUM_POINTS = 64 * 64 - 1;
 // end global declarations
@@ -38,22 +38,24 @@ void initializeMC(int MC[N][N], int x0) {
 
 /** getNeighborSpins()
   * look at 4 nearest neighbors of state at (r,c) and sum their spins
-**/
+  **/
 int getNeighborSpins(int r, int c, int grid[N][N]) {
 	//int *energy = malloc(4); // up, down, left, right
 	int energy = 0;
 	int up, down, left, right = 0;
 
+	int current_state = grid[r][c];
+
 	// update row
 	if (r == 0) {
-		up = grid[N-1][c];
-		down = grid[r+1][c];
+		up    = grid[N-1][c];
+		down  = grid[r+1][c];
 	} else if (r == N-1) {
-		up = grid[r-1][c];
-		down = grid[0][c];
+		up    = grid[r-1][c];
+		down  = grid[0][c];
 	} else {
-		up   = grid[r-1][c];
-		down = grid[r+1][c];
+		up    = grid[r-1][c];
+		down  = grid[r+1][c];
 	}
 
 	// update columm
@@ -69,6 +71,9 @@ int getNeighborSpins(int r, int c, int grid[N][N]) {
 	}
 
 	energy = up + down + left + right;
+	if (current_state == 0) {
+		energy = 4 - energy;
+	}
 	//printf("Energy = %d\n", energy);
 	return energy;
 } // end getNeighborSpins()
