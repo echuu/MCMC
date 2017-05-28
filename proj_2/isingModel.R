@@ -1,52 +1,19 @@
-
 # isingModel.R
+
+
 
 # STATS 202C: PROJECT 2
 # sampling the Ising model with coupled Markov Chains
-multiplot <- function(plots, plotlist=NULL, file, cols=1, layout=NULL) {
-    library(grid)
-    
-    # Make a list from the ... arguments and plotlist
-    #plots <- c(list(...), plotlist)
-    
-    numPlots = length(plots)
-    
-    # If layout is NULL, then use 'cols' to determine layout
-    if (is.null(layout)) {
-        # Make the panel
-        # ncol: Number of columns of plots
-        # nrow: Number of rows needed, calculated from # of cols
-        layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-                         ncol = cols, nrow = ceiling(numPlots/cols))
-    }
-    
-    if (numPlots==1) {
-        print(plots[[1]])
-        
-    } else {
-        # Set up the page
-        grid.newpage()
-        pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-        
-        # Make each plot, in the correct location
-        for (i in 1:numPlots) {
-            # Get the i,j matrix positions of the regions that contain this subplot
-            matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-            
-            print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
-                                            layout.pos.col = matchidx$col))
-        }
-    }
-}
+
 # calculate energy at position (r, c) on the lattice
 # mc: (n x n) lattice
 getNeighborSpins = function(r, c, mc) {
     energy = 0;
-    n = dim(mc)[1];
+    n = 64;
     # udpate row
     if (r == 1) {           # top row
        UP   = mc[n, c];
-       DOWN = mc[r+1, c]; 
+       DOWN = mc[r + 1, c]; 
     } else if (r == n) {    # bottom row
         UP = mc[r - 1, c];
         DOWN = mc[1, c];
@@ -67,8 +34,11 @@ getNeighborSpins = function(r, c, mc) {
         RIGHT = mc[r, c + 1];
     }
     
-    energy = c(UP, DOWN, LEFT, RIGHT);
-    return(energy)
+    energy = UP + DOWN + LEFT + RIGHT;
+    #if (mc[r,c] == 0) {
+    #    energy = 4 - energy;
+    #}
+    return(4 - energy)
 }
 
 # probabilities used to calculate the ratio
@@ -77,9 +47,8 @@ getNeighborSpins = function(r, c, mc) {
 # beta is the coefficient used to compute the conditional probability
 p = function(i, j, beta, mc) {
     energy  = getNeighborSpins(i, j, mc); # vector of neighboring spins
-    indFunc = (energy ==  1);
-    px      = exp(beta * sum(indFunc));
-    Z       = px + exp(beta * sum(!indFunc)); # normalizing constant
+    px      = exp(beta * energy);
+    Z       = px + exp(beta * (4 - energy)); # normalizing constant
     
     return(px / Z);
 }
@@ -94,50 +63,51 @@ update = function(p1, p2) {
 }
 
 gibbs = function(b, n, mm1, mm2, mc1, mc2) {
-    i = 1;
-    tau = -1;
-    converge = FALSE;
+    
+    i         =  1;
+    tau       = -1;
+    converge  = FALSE;
     countdown = 20;
+    
     while (countdown > 0) {
         # each sweep traverses the entire lattice for each MC
-        for (j in 0:num_points) {
-            # coordinate of the lattice to find energy
-            r = floor(j/n) + 1;
-            c = j %% n + 1;
-            
-            p1 = p(c, r, b, mc1); # calculate cond. probs
-            p2 = p(c, r, b, mc2);
-            
-            flips = update(p1, p2);
-            mc1[r, c] = flips[1];
-            mc2[r, c] = flips[2];
+        tmp1 = 0;
+        tmp2 = 0;
+        
+        for (r in c(1:n)) {
+            for (c in c(1:n)) {
+                p1 = p(c, r, b, mc1); # calculate cond. probs
+                p2 = p(c, r, b, mc2);
+                
+                flips = update(p1, p2);
+                mc1[r, c] = flips[1];
+                mc2[r, c] = flips[2];
+                
+                tmp1 = tmp1 + mc1[r, c];
+                tmp2 = tmp2 + mc2[r, c];
+            }
         }
         
         # update magnetic moments for i-th iteration
-        mm1 = c(mm1, sum(mc1));
-        mm2 = c(mm2, sum(mc2));
+        mm1 = c(mm1, tmp1);
+        mm2 = c(mm2, tmp2);
         
         if ((converge == FALSE) && (mm1[i] == mm2[i])) {
             tau = i;          ## coalesce time reached
             converge = TRUE;
         }
+        
         if (converge == TRUE) {
             countdown = countdown - 1;
         }
         i = i + 1;
 
-        if (i %% 1000 == 0) {
-            print(paste('iter', i));
-        }
+        #if (i %% 1000 == 0) {
+        #    print(paste('iter', i));
+        #}
     }
     
-    # mm_matrix[, b] = rbind(mm1, mm2);
     markov_chains = c(mm1, mm2);
     print(paste("beta =", b, "convergence:", tau));
     return(list(markov_chains, tau));
 }
-
-
-
-
-
