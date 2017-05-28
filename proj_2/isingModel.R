@@ -1,4 +1,3 @@
-library(ggplot2)
 
 # isingModel.R
 
@@ -94,7 +93,7 @@ update = function(p1, p2) {
     return(c(x1, x2));
 }
 
-gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
+gibbs = function(b, n, mm1, mm2, mc1, mc2) {
     i = 1;
     tau = -1;
     converge = FALSE;
@@ -106,8 +105,8 @@ gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
             r = floor(j/n) + 1;
             c = j %% n + 1;
             
-            p1 = p(c, r, beta[b], mc1); # calculate cond. probs
-            p2 = p(c, r, beta[b], mc2);
+            p1 = p(c, r, b, mc1); # calculate cond. probs
+            p2 = p(c, r, b, mc2);
             
             flips = update(p1, p2);
             mc1[r, c] = flips[1];
@@ -115,22 +114,18 @@ gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
         }
         
         # update magnetic moments for i-th iteration
-        #mm1[i,] = sum(mc1);
-        #mm2[i,] = sum(mc2);
         mm1 = c(mm1, sum(mc1));
         mm2 = c(mm2, sum(mc2));
         
         if ((converge == FALSE) && (mm1[i] == mm2[i])) {
-            tau = i; ## coalesce time reached
+            tau = i;          ## coalesce time reached
             converge = TRUE;
         }
         if (converge == TRUE) {
             countdown = countdown - 1;
         }
         i = i + 1;
-        if (i > 100000) {
-            break;
-        }
+
         if (i %% 1000 == 0) {
             print(paste('iter', i));
         }
@@ -138,88 +133,9 @@ gibbs = function(beta, b, n, mm1, mm2, mc1, mc2) {
     
     # mm_matrix[, b] = rbind(mm1, mm2);
     markov_chains = c(mm1, mm2);
-    print(paste("beta =", beta[b], "convergence:", tau));
+    print(paste("beta =", b, "convergence:", tau));
     return(list(markov_chains, tau));
 }
-
-# beta = 1 / Temperature
-beta = c(0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.9, 1.0); # 8 betas
-beta = c(0.5, 0.65, 0.75, 0.77, 0.79);
-beta = c(0.5, 0.65, 0.75, 0.83, 0.84, 0.85, 0.86, 0.88, 0.90, 1.0)
-beta = c(0.89, 0.90, 1.0)
-
-# dimension of the lattice
-n       = 64;
-nSweeps = 120; # of sweeps
-
-sweep_sequence = 1:nSweeps;
-num_points     = n * n - 1
-
-### RUN THIS CHUNK EVERY TIME ######################
-# MC1 starts with all sites = 1
-mc1 = matrix(1, n, n)
-# mm1 = matrix(0, nSweeps, 1);
-mm1 = c();
-
-# MC2 starts with all sites = 0
-mc2 = matrix(0, n, n)
-# mm2 = matrix(0, nSweeps, 1);
-mm2 = c();
-# mm_matrix = matrix(0, nSweeps*2, length(beta))
-
-mc_results = list();
-mc_results_long = list();
-coalesce   = rep(0, length(beta))
-coalesce1   = rep(0, length(beta))
-#####################################################
-
-for (b in 1:length(beta)) {
-    result = gibbs(beta, b, n, mm1, mm2, mc1, mc2);
-    mc_results_long[[b]] = result[[1]];
-    coalesce1[b]   = result[[2]];
-}
-
-
-
-for (b in 1:1) {
-    fname = paste("beta_", beta[b], ".csv", sep = "");
-    write.csv(mc_results[[b]], fname);
-}
-
-plots = list()
-coalesce[coalesce == -1] = "--";
-for (b in 1:length(beta)) {
-    moments        = mc_results[[b]];
-    chain_length = length(moments) / 2;
-    
-    results = data.frame(iter = rep(1:chain_length, 2), 
-                         mm = moments,
-                         mc = c(rep(1, chain_length), rep(2, chain_length)));
-    
-    title_b = paste("Beta =", beta[b], ",", "time =", coalesce[b]);
-    p_b = ggplot(results, aes(x = iter, y = mm, colour = as.factor(mc))) + 
-        geom_line() + 
-        labs(x = "iterations", y = "Sum of Image", title = title_b, colour = "MC") + 
-        theme_bw()
-
-    plots[[b]] = p_b;
-}
-
-
-multiplot(plots[1:4], cols = 2)
-multiplot(plots[5:8], cols = 2)
-multiplot(plots[9:10], cols = 1)
-
-
-beta_time = data.frame(b = beta[1:8], time = as.numeric(coalesce[1:8]))
-
-ggplot(beta_time, aes(x = b, y = time)) + geom_line() +
-    scale_x_continuous(breaks = seq(0.5, 1, 0.02)) + theme_bw() + 
-    labs(title = "Coalesce Time for varying values of Beta",
-         x = "beta", y = "time") + 
-    geom_vline(xintercept=0.84, linetype = "dotted", colour = "red")
-    
-
 
 
 

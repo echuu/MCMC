@@ -71,9 +71,11 @@ int getNeighborSpins(int r, int c, int grid[N][N]) {
 	}
 
 	energy = up + down + left + right;
+	/*
 	if (current_state == 0) {
-		//energy = 4 - energy;
+		energy = 4 - energy;
 	}
+	*/
 	//printf("Energy = %d\n", energy);
 	return energy;
 } // end getNeighborSpins()
@@ -101,7 +103,7 @@ double condProb(int r, int c, double beta, int mc[N][N]) {
  * generate uniformly distributed random number from [0,1]
  */
 double unif() {
-    return (double)rand() / (double)RAND_MAX ;
+    return (double) rand() / (double) RAND_MAX ;
 } // end r2()
 
 
@@ -179,7 +181,7 @@ int gibbs(int g1[N][N], int g2[N][N], double beta,
 				chain1 = tmp1;
 				chain2 = tmp2;
 				chain_length = scale * chain_length;
-				scale++;
+				//scale++;
 			}
 		} // end of resize
 
@@ -190,7 +192,7 @@ int gibbs(int g1[N][N], int g2[N][N], double beta,
 		}
 		*/
 
-		printf("iter = %d \t, mm1 = %d, mm2 = %d\n", iter, mm1, mm2);	
+		printf("iter = %d \t mm1 = %d, mm2 = %d\n", iter, mm1, mm2);	
 
 		// store magnetic moments for both of the MCs
 		// these are plotted over iteration in convergence analysis
