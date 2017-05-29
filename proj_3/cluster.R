@@ -5,7 +5,8 @@ MAX_SWEEPS = 10000;
 n          = 64;     # dimension of lattice
 n_vertices = n * n; 
 n_edges    = n_vertices - 1;
-beta       = c(0.5, 0.65, 0.75);
+betas      = c(0.65, 0.75, 0.85);
+beta       = betas[1];
 tau        = 0;  # store convergence time
 
 
@@ -19,6 +20,7 @@ mm2      = c();            # mm2 = matrix(0, nSweeps, 1);
 mc_results = list();
 coalesce   = rep(0, length(beta))
 suff_stat  = c();
+q         = 1 - exp(-beta);
 
 ## Cluster Sampling Algorithm:
 while (iter < MAX_SWEEPS) {
@@ -26,15 +28,21 @@ while (iter < MAX_SWEEPS) {
     for (r in c(1:n)) {
         for (c in c(1:n)) {
             
-
+          
+            # calculate H(X) for each markov chain
+            e1 = getNeighborSpins(r, c, mc1);
+            e2 = getNeighborSpins(r, c, mc2);
+            
+            h1 = H(r, c, mc1);
+            h2 = H(r, c, mc2);
             
             # H(X) --> pi(X) 
-            p1 = (beta, n_vertices, h1)
-            p2 = (beta, n_vertices, h2)
+            p1 = prob(beta, n_vertices, h1, e1, n);
+            p2 = prob(beta, n_vertices, h2, e2, n);
             
             # Step 1: Clustering
             
-          
+            
             # Step 2: Flipping
             
             
