@@ -26,8 +26,9 @@ void initialize ( ) {
         s[i] = new int [Ly];
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
-            s[i][j] = qadran() < 0.5 ? +1 : 0;
-            cout << s[i][j];
+            double rnd = qadran();
+            s[i][j] = rnd < 0.5 ? +1 : 0;
+            cout << rnd;
         }   // hot start
         cout << endl;
     }
