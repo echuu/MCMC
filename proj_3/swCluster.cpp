@@ -281,6 +281,8 @@ void measureObservables() {
     ++nSum;
 }
 
+double suff_stat;           // suff. stat. used to measure convergence
+
 void computeSS() {
 
     // iterate through the s
@@ -300,7 +302,6 @@ void computeSS() {
 
 double eAve;                // average energy per spin
 double eError;              // Monte Carlo error estimate
-double suff_stat;           // suff. stat. used to measure convergence
 
 void computeAverages() {
     eAve = eSum / nSum;
