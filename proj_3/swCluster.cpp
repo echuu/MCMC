@@ -8,7 +8,6 @@
 #include <iostream>
 #include <fstream>
 #include <list>                 // to save values for autocorrelations
-#include "rng.h"
 
 using namespace std;
 
@@ -72,21 +71,17 @@ void initializeClusterVariables() {
 
 // declare functions to implement Swendsen-Wang algorithm
 void freezeOrMeltBonds();
-int properLabel(int label);
+int  properLabel(int label);
 void labelClusters();
 void flipClusterSpins();
 
 void oneMonteCarloStep() {
-
     // first construct a bond lattice with frozen bonds
     freezeOrMeltBonds();
-
     // use the Hoshen-Kopelman algorithm to identify and label clusters
     labelClusters();
-
     // re-set cluster spins randomly up or down
     flipClusterSpins();
-
     ++steps;
 }
 
@@ -102,12 +97,12 @@ void freezeOrMeltBonds() {
 
         // bond in the i direction
         int iNext = i == Lx-1 ? 0 : i+1;
-        if (s[i][j] == s[iNext][j] && qadran() < freezeProbability)
+        if (s[i][j] == s[iNext][j] && unif() < freezeProbability)
             iBondFrozen[i][j] = true;
 
         // bond in the j direction
         int jNext = j == Ly-1 ? 0 : j+1;
-        if (s[i][j] == s[i][jNext] && qadran() < freezeProbability)
+        if (s[i][j] == s[i][jNext] && unif() < freezeProbability)
             jBondFrozen[i][j] = true;
     }
 }
@@ -257,19 +252,6 @@ int main() {
     double beta;
     int    MCSteps = 100;
 
-    /* Prompt user for Ising Model parameters
-    cout << " Two-dimensional Ising Model - Swendsen-Wang Algorithm\n"
-         << " -----------------------------------------------------\n"
-         << " Enter number of spins L in each direction: ";
-    cin >> Lx;
-    Ly = Lx;
-    N = Lx * Ly;
-    cout << " Enter temperature T: ";
-    cin >> T;
-    cout << " Enter number of Monte Carlo steps: ";
-    cin >> MCSteps;
-    */
-
     beta = 0.65;
     T    = 1 / beta;
     Lx   = 16;
@@ -294,7 +276,4 @@ int main() {
         cout << "iter " << i << " -- energy: " << eAve << endl;
     }
     
-    //cout << " done" << endl;
-    //computeAverages();
-    //cout << " Energy per spin = " << eAve << " +- " << eError << endl;
 }
