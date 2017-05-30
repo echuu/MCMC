@@ -257,6 +257,8 @@ void computeAverages() {
 int main() {
 
     double beta;
+    int MCSteps;
+    
     /*
     cout << " Two-dimensional Ising Model - Swendsen-Wang Algorithm\n"
          << " -----------------------------------------------------\n"
@@ -270,7 +272,7 @@ int main() {
     T = 1 / beta;
 
     cout << " Enter number of Monte Carlo steps: ";
-    int MCSteps;
+    
     cin  >> MCSteps;
     */
 
