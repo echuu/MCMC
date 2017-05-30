@@ -28,7 +28,7 @@ void initialize ( ) {
 
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
-            s[i][j] = qadran() < 0.5 ? +1 : -1;   // hot start
+            s[i][j] = qadran() < 0.5 ? 1 : 0;   // hot start
         }
     }
     steps = 0;
@@ -207,7 +207,7 @@ void flipClusterSpins() {
             // choose a random new spin value for cluster
             // only if this has not already been done
             if (!sNewChosen[label]) {    
-                sNew[label] = qadran() < 0.5 ? +1 : -1;
+                sNew[label] = qadran() < 0.5 ? 1 : 0;
                 sNewChosen[label] = true;
             }
 
@@ -258,7 +258,7 @@ int main() {
 
     double beta;
     int MCSteps;
-    
+
     /*
     cout << " Two-dimensional Ising Model - Swendsen-Wang Algorithm\n"
          << " -----------------------------------------------------\n"
