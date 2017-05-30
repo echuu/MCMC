@@ -317,7 +317,7 @@ int main() {
 
     beta = 0.65;
     T    = 1 / beta;
-    Lx   = 16;
+    Lx   = 64;
     Ly   = Lx;
     N    = Lx * Ly;
 
