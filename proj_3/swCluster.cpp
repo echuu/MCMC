@@ -31,9 +31,9 @@ void initialize ( ) {
         for (int j = 0; j < Ly; j++) {
             double rnd = unif();
             s[i][j] = rnd < 0.5 ? +1 : 0;
-            cout << rnd << " ";
+            //cout << rnd << " ";
         }   // hot start
-        cout << endl;
+        //cout << endl;
     }
     steps = 0;
 }
@@ -222,6 +222,50 @@ void initializeObservables() {
     nSum = 0;               // no terms so far
 }
 
+
+int getNeighborSpins(int r, int c) {
+    //int *energy = malloc(4); // up, down, left, right
+    int energy = 0;
+    int up, down, left, right = 0;
+
+    int current_state = s[r][c];
+
+    // update row
+    if (r == 0) {
+        up    = s[Lx-1][c];
+        down  = s[r+1][c];
+    } else if (r == Lx-1) {
+        up    = s[r-1][c];
+        down  = s[0][c];
+    } else {
+        up    = s[r-1][c];
+        down  = s[r+1][c];
+    }
+
+    // update columm
+    if (c == 0) {
+        left  = s[r][Lx-1];
+        right = s[r][c+1]; 
+    } else if (c == Lx-1) {
+        left  = s[r][c-1];
+        right = s[r][0];
+    } else {
+        left  = s[r][c-1];
+        right = s[r][c+1];
+    }
+
+    energy = up + down + left + right;
+    /*
+    if (current_state == 0) {
+        energy = 4 - energy;
+    }
+    */
+    //printf("Energy = %d\n", energy);
+    return energy;
+} // end getNeighborSpins()
+
+
+
 void measureObservables() {
     int sSum = 0, ssSum = 0;
     for (int i = 0; i < Lx; i++)
@@ -231,14 +275,32 @@ void measureObservables() {
         int jNext = j == Ly-1 ? 0 : j+1;
         ssSum += s[i][j]*(s[iNext][j] + s[i][jNext]);
     }
-    double e = -(J*ssSum + H*sSum)/N;
+    double e = -(J * ssSum + H * sSum)/N;
     eSum += e;
     eSqdSum += e * e;
     ++nSum;
 }
 
+void computeSS() {
+
+    // iterate through the s
+    double ss = 0;
+    double h;
+    for (int i = 0; i < Lx; i++) {
+        for (int j = 0; j < Ly; j++) {
+            h = getNeighborSpins(i, j);
+            if (s[i][j] == 0) {
+                h = 4 - h;
+            }
+            ss += h;
+        }
+    }
+    suff_stat = ss / (2 * N);
+}
+
 double eAve;                // average energy per spin
 double eError;              // Monte Carlo error estimate
+double suff_stat;           // suff. stat. used to measure convergence
 
 void computeAverages() {
     eAve = eSum / nSum;
@@ -271,9 +333,8 @@ int main() {
     initializeObservables();
     for (int i = 0; i < MCSteps; i++) {
         oneMonteCarloStep();
-        measureObservables();
-        computeAverages();
-        cout << "iter " << i << " -- energy: " << eAve << endl;
+        computeSS();
+        cout << "iter " << i << " -- energy: " << suff_stat << endl;
     }
     
 }
