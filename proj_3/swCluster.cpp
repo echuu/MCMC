@@ -257,7 +257,7 @@ void computeAverages() {
 int main() {
 
     double beta;
-
+    /*
     cout << " Two-dimensional Ising Model - Swendsen-Wang Algorithm\n"
          << " -----------------------------------------------------\n"
          << " Enter number of spins L in each direction: ";
@@ -272,6 +272,14 @@ int main() {
     cout << " Enter number of Monte Carlo steps: ";
     int MCSteps;
     cin  >> MCSteps;
+    */
+
+    Lx      = 64;
+    Ly      = Lx;
+    N       = Lx * Ly;
+    beta    = 0.65;
+    T       = 1 / beta;
+    MCSteps = 200;
 
     initialize();
     initializeClusterVariables();
@@ -290,6 +298,7 @@ int main() {
     for (int i = 0; i < MCSteps; i++) {
         oneMonteCarloStep();
         measureObservables();
+        computeAverages();
         cout << "Energy for iter " << i << ": " << eAve << endl;
     }
 
