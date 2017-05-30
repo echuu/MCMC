@@ -20,6 +20,10 @@ double T;                       // temperature
 double H = 0;                   // magnetic field
 int steps = 0;                  // steps so far
 
+double unif() {
+    return (double) rand() / (double) RAND_MAX ;
+} // end r2()
+
 void initialize ( ) {
     s = new int* [Lx];
     for (int i = 0; i < Lx; i++)
@@ -28,7 +32,7 @@ void initialize ( ) {
         for (int j = 0; j < Ly; j++) {
             double rnd = qadran();
             s[i][j] = rnd < 0.5 ? +1 : 0;
-            cout << rnd;
+            cout << rnd << " ";
         }   // hot start
         cout << endl;
     }
