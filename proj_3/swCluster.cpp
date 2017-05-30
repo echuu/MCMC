@@ -30,7 +30,7 @@ void initialize ( ) {
         s[i] = new int [Ly];
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
-            double rnd = qadran();
+            double rnd = unif();
             s[i][j] = rnd < 0.5 ? +1 : 0;
             cout << rnd << " ";
         }   // hot start
@@ -206,7 +206,7 @@ void flipClusterSpins() {
         // choose a random new spin value for cluster
         // only if this has not already been done
         if (!sNewChosen[label]) {    
-            sNew[label] = qadran() < 0.5 ? +1 : 0;
+            sNew[label] = unif() < 0.5 ? +1 : 0;
             sNewChosen[label] = true;
         }
 
