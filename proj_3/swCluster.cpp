@@ -30,7 +30,8 @@ void initialize ( ) {
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
             double rnd = unif();
-            s[i][j] = rnd < 0.5 ? +1 : 0;
+            //s[i][j] = rnd < 0.5 ? +1 : 0;
+            s[i][j] = 1;
             //cout << rnd << " ";
         }   // hot start
         //cout << endl;
@@ -228,7 +229,7 @@ int getNeighborSpins(int r, int c) {
     int energy = 0;
     int up, down, left, right = 0;
 
-    int current_state = s[r][c];
+    //int current_state = s[r][c];
 
     // update row
     if (r == 0) {
@@ -254,7 +255,7 @@ int getNeighborSpins(int r, int c) {
         right = s[r][c+1];
     }
 
-    energy = up + down + left + right;
+    energy = 4 - up + down + left + right;
     /*
     if (current_state == 0) {
         energy = 4 - energy;
@@ -291,13 +292,15 @@ void computeSS() {
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
             h = getNeighborSpins(i, j);
+            /*
             if (s[i][j] == 0) {
                 h = 4 - h;
             }
+            */
             ss += h;
         }
     }
-    suff_stat = ss / (2 * N);
+    suff_stat = ss / (2 * N - 2 * Lx);
 }
 
 double eAve;                // average energy per spin
@@ -315,9 +318,9 @@ int main() {
     double beta;
     int    MCSteps = 100;
 
-    beta = 0.65;
+    beta = 0.85;
     T    = 1 / beta;
-    Lx   = 64;
+    Lx   = 256;
     Ly   = Lx;
     N    = Lx * Ly;
 
@@ -326,16 +329,17 @@ int main() {
 
     int thermSteps = MCSteps / 5;
     cout << " Performing " << thermSteps 
-         << " thermalization steps ..." << flush;
-    for (int i = 0; i < thermSteps; i++)
+         << " thermalization steps ..." << flush << endl;
+    for (int i = 0; i < thermSteps; i++){
         oneMonteCarloStep();
-    cout << " done\n Performing production steps ..." << flush;
+        computeSS();
+    }
+    cout << " done\n Performing production steps ..." << flush << endl;
 
     initializeObservables();
     for (int i = 0; i < MCSteps; i++) {
         oneMonteCarloStep();
         computeSS();
-        cout << "iter " << i << " -- energy: " << suff_stat << endl;
+        cout << "iter " << i+1 << " -- energy: " << suff_stat << endl;
     }
-    
 }
