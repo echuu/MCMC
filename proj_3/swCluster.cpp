@@ -24,9 +24,13 @@ void initialize ( ) {
     s = new int* [Lx];
     for (int i = 0; i < Lx; i++)
         s[i] = new int [Ly];
-    for (int i = 0; i < Lx; i++)
-        for (int j = 0; j < Ly; j++)
-            s[i][j] = qadran() < 0.5 ? +1 : 0;   // hot start
+    for (int i = 0; i < Lx; i++) {
+        for (int j = 0; j < Ly; j++) {
+            s[i][j] = qadran() < 0.5 ? +1 : 0;
+            cout << s[i][j];
+        }   // hot start
+        cout << endl;
+    }
     steps = 0;
 }
 
@@ -263,8 +267,8 @@ int main() {
 
     beta = 0.65;
     T    = 1 / beta;
-    Lx   = 64;
-    Ly   = 64;
+    Lx   = 16;
+    Ly   = Lx;
     N    = Lx * Ly;
 
     initialize();
