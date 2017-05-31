@@ -12,7 +12,7 @@ sw: $(OBJS)
 	g++ $(CFLAGS) $(OBJS) -o sw -L$(LIB_PATH) $(LIB)
 
 swCluster.o: swCluster.c $(HDRS)
-	gcc $(CFLAGS) -c swCluster.cpp -o swCluster.o
+	g++ $(CFLAGS) -c swCluster.cpp -o swCluster.o
 
 clean:
 	rm -f $(OBJS) sw

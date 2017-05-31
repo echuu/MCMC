@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>                 // to save values for autocorrelations
+#include <time.h>
 
 using namespace std;
 
@@ -23,19 +24,35 @@ double unif() {
     return (double) rand() / (double) RAND_MAX ;
 } // end r2()
 
-void initialize () {
+void initialize (int init_state) {
+    s = new int* [Lx];
+    for (int i = 0; i < Lx; i++)
+        s[i] = new int [Ly];
+    for (int i = 0; i < Lx; i++) {
+        for (int j = 0; j < Ly; j++) {
+            //double rnd = unif();
+            //s[i][j] = init_state < 0.5 ? 1 : 0;
+            s[i][j] = init_state;
+        }
+    }
+    steps = 0;
+} // end initialize()
+
+
+void initializeRand () {
     s = new int* [Lx];
     for (int i = 0; i < Lx; i++)
         s[i] = new int [Ly];
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
             double rnd = unif();
-            //s[i][j] = rnd < 0.5 ? 1 : 0;
-            s[i][j] = 1;
+            s[i][j] = rnd < 0.5 ? 1 : 0;
+            //s[i][j] = init_state;
         }
     }
     steps = 0;
 } // end initialize()
+
 
 bool     **iBondFrozen, **jBondFrozen; // bond lattice - two bonds per spin
 double   freezeProbability;            // 1 - e^(-2/T)
@@ -155,7 +172,7 @@ void labelClusters() {
                 cluster[i][j] = label;
                 labelLabel[label] = label;
                 ++label;
-            } else {          // re-label bonded spins with smallest proper label
+            } else {        // re-label bonded spins with smallest proper label
                 int minLabel = label;
                 for (int b = 0; b < bonds; b++) {
                     int pLabel = properLabel(cluster[iBond[b]][jBond[b]]);
@@ -274,7 +291,9 @@ void measureObservables() {
         int jNext = j == Ly-1 ? 0 : j+1;
         ssSum += s[i][j]*(s[iNext][j] + s[i][jNext]);
     }
-    double e = -(J * ssSum + H * sSum)/N;
+    //cout << "sSum = " << ssSum << ", H = " << H << " -> " << H * sSum << endl;
+    //double e = -(1.0 * ssSum)/N;
+    double e = 1.0 * ssSum / (2*N);
     eSum += e;
     eSqdSum += e * e;
     ++nSum;
@@ -308,17 +327,15 @@ void computeAverages() {
 
 int main() {
 
+    srand(time(NULL));
     double beta;
-    int    MCSteps = 100;
+    int    MCSteps = 30;
 
-    beta = 0.85;
+    beta = 0.65;
     T    = 1 / beta;
     Lx   = 256;
     Ly   = Lx;
     N    = Lx * Ly;
-
-    initialize();
-    initializeClusterVariables();
 
     /* start with thermalization steps
 
@@ -340,10 +357,47 @@ int main() {
 
     */
 
+    double eps = 0.01;
+    double avgMC1[MCSteps];
+    double avgMC2[MCSteps];
+    double delta[MCSteps];
+
+    initialize(0);
+    initializeClusterVariables();
     initializeObservables();
+    cout << "MC 1 H(X) Values: " << endl;
     for (int i = 0; i < MCSteps; i++) {
         oneMonteCarloStep();
-        computeSS();
-        cout << "iter " << i+1 << " -- H(X) = " << suff_stat << endl;
+        measureObservables();
+        computeAverages();
+        cout << eAve << endl;
+        avgMC1[i] = eAve;
     }
+    
+    initializeRand();
+    initializeClusterVariables();
+    initializeObservables();
+    cout << "MC 2 H(X) Values: " << endl;
+    for (int i = 0; i < MCSteps; i++) {
+        oneMonteCarloStep();
+        measureObservables();
+        computeAverages();
+        cout << eAve << endl;
+        avgMC2[i] = eAve;
+    }
+
+
+    double diff = 0;
+    for (int i = 0; i < MCSteps; i++) {
+        diff = avgMC1[i] - avgMC2[i];
+        delta[i] = diff;
+        if (fabs(diff) < eps) {
+            cout << "iter: " << i << " --- delta h = " << diff;
+            cout << " --- Convergencence! (" << avgMC1[i] << ", " <<
+                avgMC2[i] << ")" << endl;
+            break;
+        }
+    }
+
+    
 }
