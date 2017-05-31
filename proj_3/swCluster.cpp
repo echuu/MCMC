@@ -331,7 +331,7 @@ int main() {
     double beta;
     int    MCSteps = 30;
 
-    beta = 0.65;
+    beta = 0.85;
     T    = 1 / beta;
     Lx   = 256;
     Ly   = Lx;
