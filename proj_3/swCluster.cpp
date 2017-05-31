@@ -11,7 +11,7 @@
 
 using namespace std;
 
-double J = +1;                  // ferromagnetic coupling
+double J = 1;                   // ferromagnetic coupling
 int Lx, Ly;                     // number of spins in x and y
 int N;                          // number of spins
 int **s;                        // the spins
@@ -23,28 +23,26 @@ double unif() {
     return (double) rand() / (double) RAND_MAX ;
 } // end r2()
 
-void initialize ( ) {
+void initialize () {
     s = new int* [Lx];
     for (int i = 0; i < Lx; i++)
         s[i] = new int [Ly];
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
             double rnd = unif();
-            //s[i][j] = rnd < 0.5 ? +1 : 0;
+            //s[i][j] = rnd < 0.5 ? 1 : 0;
             s[i][j] = 1;
-            //cout << rnd << " ";
-        }   // hot start
-        //cout << endl;
+        }
     }
     steps = 0;
-}
+} // end initialize()
 
-bool **iBondFrozen, **jBondFrozen;  // bond lattice - two bonds per spin
-double freezeProbability;           // 1 - e^(-2J/kT)
-int **cluster;                      // cluster labels for spins
-int *labelLabel;                    // to determine proper labels
-bool *sNewChosen;                   // has the new spin value been chosen?
-int *sNew;                          // random new spin values in each cluster
+bool     **iBondFrozen, **jBondFrozen; // bond lattice - two bonds per spin
+double   freezeProbability;            // 1 - e^(-2/T)
+int      **cluster;                    // cluster labels for spins
+int      *labelLabel;                  // to determine proper labels
+bool     *sNewChosen;                  // has the new spin value been chosen?
+int      *sNew;                        // random new spin values in each cluster
 
 void initializeClusterVariables() {
 
@@ -67,7 +65,7 @@ void initializeClusterVariables() {
     // allocate arrays of size = number of spins for
     labelLabel = new int [N];        // proper label pointers
     sNewChosen = new bool [N];       // setting new cluster spin values
-    sNew = new int [N];              // new cluster spin values
+    sNew       = new int [N];        // new cluster spin values
 }
 
 // declare functions to implement Swendsen-Wang algorithm
@@ -89,22 +87,23 @@ void oneMonteCarloStep() {
 void freezeOrMeltBonds() {
 
     // visit all the spins in the lattice
-    for (int i = 0; i < Lx; i++)
-    for (int j = 0; j < Ly; j++) {
+    for (int i = 0; i < Lx; i++) {
+        for (int j = 0; j < Ly; j++) {
 
-        // freeze or melt the two bonds connected to this spin
-        // using a criterion which depends on the Boltzmann factor
-        iBondFrozen[i][j] = jBondFrozen[i][j] = false;
+            // freeze or melt the two bonds connected to this spin
+            // using a criterion which depends on the Boltzmann factor
+            iBondFrozen[i][j] = jBondFrozen[i][j] = false;
 
-        // bond in the i direction
-        int iNext = i == Lx-1 ? 0 : i+1;
-        if (s[i][j] == s[iNext][j] && unif() < freezeProbability)
-            iBondFrozen[i][j] = true;
+            // bond in the i direction
+            int iNext = i == Lx-1 ? 0 : i+1;
+            if (s[i][j] == s[iNext][j] && unif() < freezeProbability)
+                iBondFrozen[i][j] = true;
 
-        // bond in the j direction
-        int jNext = j == Ly-1 ? 0 : j+1;
-        if (s[i][j] == s[i][jNext] && unif() < freezeProbability)
-            jBondFrozen[i][j] = true;
+            // bond in the j direction
+            int jNext = j == Ly-1 ? 0 : j+1;
+            if (s[i][j] == s[i][jNext] && unif() < freezeProbability)
+                jBondFrozen[i][j] = true;
+        }
     }
 }
 
@@ -119,64 +118,65 @@ void labelClusters() {
     int label = 0;
 
     // visit all lattice sites
-    for (int i = 0; i < Lx; i++)
-    for (int j = 0; j < Ly; j++) {
+    for (int i = 0; i < Lx; i++) {
+        for (int j = 0; j < Ly; j++) {
 
-        // find previously visited sites connected to i,j by frozen bonds
-        int bonds = 0;
-        int iBond[4], jBond[4];
+            // find previously visited sites connected to i,j by frozen bonds
+            int bonds = 0;
+            int iBond[4], jBond[4];
 
-        // check bond to i-1,j
-        if (i > 0 && iBondFrozen[i - 1][j]) {
-            iBond[bonds] = i - 1;
-            jBond[bonds++] = j;
-        }
-
-        // apply periodic conditions at the boundary:
-        // if i,j is the last site, check bond to i+1,j
-        if (i == Lx - 1 && iBondFrozen[i][j]) {
-            iBond[bonds] = 0;
-            jBond[bonds++] = j;
-        }
-
-        // check bond to i,j-1
-        if (j > 0 && jBondFrozen[i][j - 1]) {
-            iBond[bonds] = i;
-            jBond[bonds++] = j - 1;
-        }
-
-        // periodic boundary conditions at the last site
-        if (j == Ly - 1 && jBondFrozen[i][j]) {
-            iBond[bonds] = i;
-            jBond[bonds++] = 0;
-        }
-
-        // check number of bonds to previously visited sites
-        if (bonds == 0) { // need to start a new cluster
-            cluster[i][j] = label;
-            labelLabel[label] = label;
-            ++label;
-        } else {          // re-label bonded spins with smallest proper label
-            int minLabel = label;
-            for (int b = 0; b < bonds; b++) {
-                int pLabel = properLabel(cluster[iBond[b]][jBond[b]]);
-                if (minLabel > pLabel)
-                    minLabel = pLabel;
+            // check bond to i-1,j
+            if (i > 0 && iBondFrozen[i - 1][j]) {
+                iBond[bonds] = i - 1;
+                jBond[bonds++] = j;
             }
 
-            // set current site label to smallest proper label
-            cluster[i][j] = minLabel;
-
-            // re-set the proper label links on the previous labels
-            for (int b = 0; b < bonds; b++) {
-                int pLabel = cluster[iBond[b]][jBond[b]];
-                labelLabel[pLabel] = minLabel;
-
-                // re-set label on connected sites
-                cluster[iBond[b]][jBond[b]] = minLabel;
+            // apply periodic conditions at the boundary:
+            // if i,j is the last site, check bond to i+1,j
+            if (i == Lx - 1 && iBondFrozen[i][j]) {
+                iBond[bonds] = 0;
+                jBond[bonds++] = j;
             }
-        }
-    }
+
+            // check bond to i,j-1
+            if (j > 0 && jBondFrozen[i][j - 1]) {
+                iBond[bonds] = i;
+                jBond[bonds++] = j - 1;
+            }
+
+            // periodic boundary conditions at the last site
+            if (j == Ly - 1 && jBondFrozen[i][j]) {
+                iBond[bonds] = i;
+                jBond[bonds++] = 0;
+            }
+
+            // check number of bonds to previously visited sites
+            if (bonds == 0) { // need to start a new cluster
+                cluster[i][j] = label;
+                labelLabel[label] = label;
+                ++label;
+            } else {          // re-label bonded spins with smallest proper label
+                int minLabel = label;
+                for (int b = 0; b < bonds; b++) {
+                    int pLabel = properLabel(cluster[iBond[b]][jBond[b]]);
+                    if (minLabel > pLabel)
+                        minLabel = pLabel;
+                }
+
+                // set current site label to smallest proper label
+                cluster[i][j] = minLabel;
+
+                // re-set the proper label links on the previous labels
+                for (int b = 0; b < bonds; b++) {
+                    int pLabel = cluster[iBond[b]][jBond[b]];
+                    labelLabel[pLabel] = minLabel;
+
+                    // re-set label on connected sites
+                    cluster[iBond[b]][jBond[b]] = minLabel;
+                }
+            }
+        } // end inner for loop
+    } // end outer for loop
 }
 
 void flipClusterSpins() {
@@ -202,13 +202,13 @@ void flipClusterSpins() {
         // choose a random new spin value for cluster
         // only if this has not already been done
         if (!sNewChosen[label]) {    
-            sNew[label] = unif() < 0.5 ? +1 : 0;
+            sNew[label] = unif() < 0.5 ? 1 : 0;
             sNewChosen[label] = true;
         }
 
         // re-set the spin value and count number of flips
         if (s[i][j] != sNew[label]) {
-            s[i][j] = sNew[label];
+            s[i][j]  = sNew[label];
             ++flips;
         }
     }
@@ -229,7 +229,7 @@ int getNeighborSpins(int r, int c) {
     int energy = 0;
     int up, down, left, right = 0;
 
-    //int current_state = s[r][c];
+    int current_state = s[r][c];
 
     // update row
     if (r == 0) {
@@ -255,13 +255,11 @@ int getNeighborSpins(int r, int c) {
         right = s[r][c+1];
     }
 
-    energy = 4 - up + down + left + right;
-    /*
+    energy = up + down + left + right;
+    
     if (current_state == 0) {
         energy = 4 - energy;
     }
-    */
-    //printf("Energy = %d\n", energy);
     return energy;
 } // end getNeighborSpins()
 
@@ -286,21 +284,16 @@ double suff_stat;           // suff. stat. used to measure convergence
 
 void computeSS() {
 
-    // iterate through the s
+    // iterate through s
     double ss = 0;
     double h;
     for (int i = 0; i < Lx; i++) {
         for (int j = 0; j < Ly; j++) {
-            h = getNeighborSpins(i, j);
-            /*
-            if (s[i][j] == 0) {
-                h = 4 - h;
-            }
-            */
+            h = getNeighborSpins(i, j); // sum of 'like' components
             ss += h;
         }
     }
-    suff_stat = ss / (2 * N - 2 * Lx);
+    suff_stat = ss / (2 * N); // normalized by # of edges
 }
 
 double eAve;                // average energy per spin
@@ -327,6 +320,8 @@ int main() {
     initialize();
     initializeClusterVariables();
 
+    /* start with thermalization steps
+
     int thermSteps = MCSteps / 5;
     cout << " Performing " << thermSteps 
          << " thermalization steps ..." << flush << endl;
@@ -341,5 +336,14 @@ int main() {
         oneMonteCarloStep();
         computeSS();
         cout << "iter " << i+1 << " -- energy: " << suff_stat << endl;
+    }
+
+    */
+
+    initializeObservables();
+    for (int i = 0; i < MCSteps; i++) {
+        oneMonteCarloStep();
+        computeSS();
+        cout << "iter " << i+1 << " -- H(X) = " << suff_stat << endl;
     }
 }

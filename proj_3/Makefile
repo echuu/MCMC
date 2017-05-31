@@ -1,18 +1,18 @@
 INC_PATH = /home/eric/gsl-2.3
 GSL_PATH = /home/eric/gsl-2.3
 HDRS = 
-OBJS = clusterSampling.o
+OBJS = swCluster.o
 LIB_PATH = /home/eric/torch/install/lib
 LIB = -lpthread -lrt -ldl -lm
 CFLAGS = -g -I$(GSL_PATH)
 
-all: target
+all: sw
 
-target: $(OBJS)
-	gcc $(CFLAGS) $(OBJS) -o target -L$(LIB_PATH) $(LIB)
+sw: $(OBJS)
+	g++ $(CFLAGS) $(OBJS) -o sw -L$(LIB_PATH) $(LIB)
 
-clusterSampling.o: clusterSampling.c $(HDRS)
-	gcc $(CFLAGS) -c clusterSampling.c -o clusterSampling.o
+swCluster.o: swCluster.c $(HDRS)
+	gcc $(CFLAGS) -c swCluster.cpp -o swCluster.o
 
 clean:
-	rm -f $(OBJS) target
+	rm -f $(OBJS) sw
