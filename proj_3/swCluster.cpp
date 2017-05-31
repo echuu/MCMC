@@ -196,6 +196,8 @@ void labelClusters() {
     } // end outer for loop
 }
 
+int num_flips = 0;
+
 void flipClusterSpins() {
 
     for (int i = 0; i < Lx; i++)
@@ -229,6 +231,7 @@ void flipClusterSpins() {
             ++flips;
         }
     }
+    num_flips = flips;
 }
 
 double eSum;                // accumulator for energy per spin
@@ -331,6 +334,7 @@ int main() {
     double beta;
     int    MCSteps = 30;
 
+
     beta = 0.85;
     T    = 1 / beta;
     Lx   = 256;
@@ -370,7 +374,7 @@ int main() {
         oneMonteCarloStep();
         measureObservables();
         computeAverages();
-        cout << eAve << endl;
+        cout << eAve << "-- num flips = " << num_flips << endl;
         avgMC1[i] = eAve;
     }
     
@@ -382,7 +386,7 @@ int main() {
         oneMonteCarloStep();
         measureObservables();
         computeAverages();
-        cout << eAve << endl;
+        cout << eAve << "-- num flips = " << num_flips << endl;
         avgMC2[i] = eAve;
     }
 
@@ -392,8 +396,8 @@ int main() {
         diff = avgMC1[i] - avgMC2[i];
         delta[i] = diff;
         if (fabs(diff) < eps) {
-            cout << "iter: " << i << " --- delta h = " << diff;
-            cout << " --- Convergencence! (" << avgMC1[i] << ", " <<
+            cout << "iter: " << i;
+            cout << " -- Convergencence! (" << avgMC1[i] << ", " <<
                 avgMC2[i] << ")" << endl;
             break;
         }

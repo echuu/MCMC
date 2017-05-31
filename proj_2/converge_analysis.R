@@ -54,7 +54,8 @@ generatePlots = function() {
     title_b = paste("Beta =", beta[b], ",", "time =", coalesce[b]);
     p_b = ggplot(results, aes(x = iter, y = mm, colour = as.factor(mc))) + 
       geom_line() + 
-      labs(x = "iterations", y = "Sum of Image", title = title_b, colour = "MC") + 
+      labs(x = "iterations", y = "Sum of Image", 
+           title = title_b, colour = "MC") + 
       theme_bw()
     
     plots[[b]] = p_b;

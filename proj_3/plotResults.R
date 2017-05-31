@@ -101,16 +101,17 @@ gibbs_converge[[3]]= gibbs_converge[[3]] +
 
 ################################################################################
 
-
+# Project Questions
 
 # (1) plot sufficient statistics  H(X) of the current state X(t) against iter
-multiplot(beta_plots, cols = 2)
-
 # (2) Mark convergence time in the plots for comparison b/w 3 betas
 #     and against the gibbs sampler convergence in project 2
+# (4) Run the two MCs for beta = 1.0 and see how fast they converge
 all_plots = append(beta_plots, gibbs_converge)
 multiplot(all_plots[c(1, 2, 5, 6)], cols = 2)
 multiplot(all_plots[c(3, 4, 7, 8)], cols = 2)
+
+# (3) average size of the CPs flipped at each step (# of pixels) for each beta
 
 
 
