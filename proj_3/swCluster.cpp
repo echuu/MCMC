@@ -332,10 +332,10 @@ int main() {
 
     srand(time(NULL));
     double beta;
-    int    MCSteps = 30;
+    int    MCSteps = 50;
 
 
-    beta = 0.85;
+    beta = 1.45;
     T    = 1 / beta;
     Lx   = 256;
     Ly   = Lx;

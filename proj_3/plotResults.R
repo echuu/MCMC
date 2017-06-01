@@ -100,6 +100,49 @@ gibbs_converge[[3]]= gibbs_converge[[3]] +
     geom_vline(xintercept = coalesce_time[3], linetype = "dotted")
 
 ################################################################################
+flip_plots = list()
+for (i in 1:length(betas[1:3])) {
+    vals = c(65, 75, 85)
+    pref = "flip_beta"
+    q_i          = read.csv(paste(pref, vals[i], ".csv", sep = ""));
+    qi_long      = melt(q_i, id = "iter");
+    chain_length = dim(q_i)[1];
+
+    p_i = ggplot(qi_long, aes(x = iter, y = value, colour = variable)) + 
+        geom_line() + 
+        labs(x = "iteration", y = "number of flips", 
+             title = paste("Beta = ", betas[i], sep = "")) +
+        scale_x_continuous(breaks = 1:chain_length) + theme_bw()
+    flip_plots[[i]] = p_i
+}
+################################################################################
+
+
+# version 2
+setwd("~/MCMC/proj_3/version2")
+
+pref = "beta_";
+v2_plots = list();
+for (i in 1:length(betas)) {
+    q_i          = read.csv(paste(pref, betas[i], ".csv", sep = ""));
+    qi_long      = melt(q_i, id = "iter");
+    chain_length = dim(q_i)[1];
+    h            = round(mean(q_i$mc1[chain_length], q_i$mc2[chain_length]), 3)
+    
+    
+    p_i = ggplot(qi_long, aes(x = iter, y = value, colour = variable)) + 
+        geom_line() + 
+        labs(x = "iteration", y = "H(X)", 
+             title = paste("Beta = ", betas[i], ", ", "H(X) = ", h, sep = "")) +
+        scale_x_continuous(breaks = 1:chain_length) + theme_bw() + 
+        geom_vline(xintercept = chain_length, linetype = "dotted")
+    v2_plots[[i]] = p_i
+}
+
+
+
+################################################################################
+
 
 # Project Questions
 
@@ -112,7 +155,13 @@ multiplot(all_plots[c(1, 2, 5, 6)], cols = 2)
 multiplot(all_plots[c(3, 4, 7, 8)], cols = 2)
 
 # (3) average size of the CPs flipped at each step (# of pixels) for each beta
+multiplot(flip_plots, cols = 1)
 
+
+
+# version 2
+
+multiplot(v2_plots, cols = 2)
 
 
 
