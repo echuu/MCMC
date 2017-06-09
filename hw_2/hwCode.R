@@ -2,23 +2,22 @@
 # STATS 202C: HW 2
 library(ggplot2)
 # Problem 3 -- Shuffling Cards
-X_0 = c(1:52);   # deck of cards
-iters        = 10000;
-
 
 # perform k shuffles (of t riffles) -> compute histogram of each card position
     # have k x 52, each row storing results of riffle
     # table for each row, divide by k to normalize to 1
     # store into position_dist matrix (match by card value)
 
-randomness = rep(0, 10); # store randomness calculation
+X_0        = c(1:52);   # deck of cards
+iters      = 10000;
+shuffles   = 15;
+randomness = rep(0, shuffles); # store randomness calculation
 
-for (num_shuffles in 1:10) {
+for (num_shuffles in 1:shuffles) {
     decks = matrix(rep(1:52, iters), nrow = iters, byrow = TRUE)
     for (k in 1:iters) {
         # shuffle t times
         X_cur = X_0;
-        #print(paste("shuffling", num_shuffles, " times"));
         for (t in 1:num_shuffles) {
             X_t = shuffle(X_cur);
             X_cur = X_t;
@@ -41,6 +40,13 @@ for (num_shuffles in 1:10) {
     randomness[num_shuffles] = err(position_dist)
     print(paste("iter:", num_shuffles, "-- randomness =", randomness[num_shuffles]));
 }
+
+random_results = data.frame(iter = 1:shuffles, randomness)
+ggplot(random_results, aes(x = iter, y = randomness)) + geom_line() + 
+    geom_point() + theme_bw() + labs(x = "Iteration", y = "err(t)", 
+                      title = "Randomness as a function of time") + 
+    scale_x_continuous(breaks = 1:15)
+    
 
 # shuffling function, takes input of current state
 # returns next iteration (one iteration of shuffling)
